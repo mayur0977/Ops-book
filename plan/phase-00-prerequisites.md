@@ -42,7 +42,7 @@ Starting them late is the most common way a project like this slips at the end.
 - [x] `docs/design/` — design system, HIG, motion
 - [x] `plan/` — roadmap and 12 phase files
 - [x] CI workflow + vertical-leak check
-- [x] `.claude/commands` — /status, /next, /phase-check, /wrap, /design-check
+- [x] `.claude/commands` — /status, /next, /phase-check, /wrap, /design-check, /commit
 - [x] GitHub repository created and pushed (`mayur0977/Ops-book`)
 - [ ] Confirm repository visibility is private
 - [ ] Branch protection on `main`

@@ -63,6 +63,7 @@ Slash commands:
 | `/next` | Build the next task in the current phase |
 | `/phase-check` | Verify exit criteria before closing a phase |
 | `/wrap` | Update STATUS.md and hand off |
+| `/commit` | Review, gate, stage and commit — add `push` to push too |
 
 ## Scope boundaries
 

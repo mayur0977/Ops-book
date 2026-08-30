@@ -104,6 +104,9 @@ pnpm check:vertical-leak
   changes, then stop and show what changed — the file list plus a point-wise
   summary of what was added or modified — and wait for approval. Editing files
   unprompted is fine; putting them into history is not.
+- **`/commit` is the approval.** Running it means the changes have been reviewed
+  and cleared, so it stages and commits without asking again. `/commit push`
+  also pushes. Nothing else may reach git history unprompted.
 - **End every piece of work with a point-wise summary**, grouped by area, saying
   what each change does rather than restating filenames. Separate "added" from
   "changed". It is a review aid, not a changelog.
