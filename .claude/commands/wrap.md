@@ -12,6 +12,8 @@ description: End the session — update STATUS.md and summarise
 4. If every exit criterion in the phase passes, mark the phase ☑ in
    `plan/ROADMAP.md` and set STATUS to the next phase.
 5. Report in three lines what a person picking this up tomorrow needs to know.
+6. **Do not commit.** Show the changed-file list and a point-wise summary, then
+   wait for approval.
 
 Be honest about what is not tested. A STATUS file that overstates progress is
 worse than none.

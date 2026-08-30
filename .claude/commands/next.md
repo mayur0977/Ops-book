@@ -11,5 +11,7 @@ description: Do the next task in the current phase
 5. Run `pnpm typecheck && pnpm test && pnpm check:vertical-leak`.
 6. Tick the task in the phase file.
 7. Update `plan/STATUS.md`.
+8. **Stop before git.** Show the changed files and a point-wise summary of what
+   was added and changed, then wait for approval to commit.
 
 If the task belongs to a later phase, say so and stop. Do not build ahead.

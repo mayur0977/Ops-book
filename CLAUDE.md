@@ -98,6 +98,16 @@ pnpm test:affected      # only what changed vs origin/main
 pnpm check:vertical-leak
 ```
 
+## Working agreement
+
+- **Never `git add`, `git commit` or `git push` without asking.** Make the
+  changes, then stop and show what changed — the file list plus a point-wise
+  summary of what was added or modified — and wait for approval. Editing files
+  unprompted is fine; putting them into history is not.
+- **End every piece of work with a point-wise summary**, grouped by area, saying
+  what each change does rather than restating filenames. Separate "added" from
+  "changed". It is a review aid, not a changelog.
+
 ## Conventions
 
 - **Commits:** `type(scope): summary` — e.g. `feat(labour): muster roll batch upsert`.
