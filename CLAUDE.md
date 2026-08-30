@@ -18,7 +18,9 @@ machinery, tasks and photographic evidence — offline-first, multi-tenant.
 | Why is it built this way | `docs/decisions/` (ADRs) |
 | How does the generic/vertical config work | `docs/verticals.md` |
 | Security rules | `docs/security.md` |
-| Mobile design rules | `docs/design/apple-hig.md` |
+| Mobile design — look | `docs/design/design-system.md` |
+| Mobile design — behaviour | `docs/design/apple-hig.md` |
+| Mobile design — motion | `docs/design/motion.md` |
 | Offline sync contract | `docs/sync-contract.md` |
 
 ## Structure
@@ -78,6 +80,12 @@ These are not style preferences. Breaking one is a bug.
 9. **Secrets never in the repo, the app bundle, or an EAS build profile.**
 10. **Wage and attendance records are append-only.** Corrections post a
     reversing entry with a reason. A settled wage period is immutable.
+11. **Design tokens only in the app.** A hardcoded colour, radius, font size or
+    animation duration is a review-blocking error. The identity is defined once
+    in `docs/design/design-system.md` and implemented once in
+    `apps/mobile/src/ui/theme/`.
+12. **Motion is feedback, not decoration.** Reanimated worklets only, nothing
+    over 240ms on a data-entry path, `useReducedMotion()` always handled.
 
 ## Commands
 

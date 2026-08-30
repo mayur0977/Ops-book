@@ -14,8 +14,10 @@ Starting them late is the most common way a project like this slips at the end.
 
 ### Decisions
 - [ ] **Decide the product name.** Replace "OpsBook" everywhere. Bundle
-      identifiers are permanent once published.
+      identifiers are permanent once published. ← **only open decision**
 - [ ] Reserve bundle identifiers: `com.<you>.<name>` for iOS and Android.
+- [x] **Design direction agreed** — "Ledger" (ADR 0006). Identity, colour, type
+      and motion specified in `docs/design/`.
 
 ### Accounts & registrations (start today — long lead times)
 - [ ] Apple Developer Program ($99/yr) — needed for TestFlight, not just release
@@ -32,21 +34,39 @@ Starting them late is the most common way a project like this slips at the end.
 
 ### Repository
 - [x] Workspace scaffolded (`pnpm-workspace.yaml`, `turbo.json`, `.npmrc`)
-- [x] `CLAUDE.md` rule files
-- [x] `docs/` — PRD, BRD, security, verticals, sync contract, HIG, ADRs
-- [x] `plan/` — roadmap and phase files
+- [x] `CLAUDE.md` rule files (root + per app/package)
+- [x] `docs/` — PRD, BRD, security, verticals, sync contract, ADRs
+- [x] `docs/design/` — design system, HIG, motion
+- [x] `plan/` — roadmap and 12 phase files
 - [x] CI workflow + vertical-leak check
-- [ ] Create the private GitHub repository and push
+- [x] `.claude/commands` — /status, /next, /phase-check, /wrap, /design-check
+- [x] GitHub repository created and pushed (`mayur0977/Ops-book`)
+- [ ] Confirm repository visibility is private
 - [ ] Branch protection on `main`
 
 ## Exit criteria
 
+- [x] Design direction agreed and documented
+- [x] Repository scaffolded, pushed, and rules in place
 - [ ] Product name decided and applied throughout the repo
 - [ ] Apple and Google accounts approved
 - [ ] DLT registration submitted (approval may still be pending)
 - [ ] `node -v` reports 24.20.0
 - [ ] `pnpm db:up` brings up all three services healthy
 - [ ] One CI run is green on a clean checkout
+
+## Blocked on you (not on code)
+
+These are the long poles and none of them are things I can do:
+
+1. **Product name** — everything else in Phase 0 is done and this is the last
+   decision. Bundle identifiers are permanent once published.
+2. **Apple Developer Program** — $99/yr, identity verification takes days
+3. **Google Play Console** — $25 once, then a sustained closed test before
+   production access
+4. **DLT registration** — weeks, and OTP SMS does not deliver in India without it
+5. **Node 24.20.0** locally — `nvm install 24.20.0`
+6. **Repo visibility + branch protection** — two minutes in GitHub settings
 
 ## Out of scope
 

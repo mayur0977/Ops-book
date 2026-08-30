@@ -4,7 +4,7 @@ Legend: ☐ not started · ◐ in progress · ☑ done
 
 | # | Phase | Size | State |
 |---|---|---|---|
-| 0 | [Prerequisites](phase-00-prerequisites.md) | S | ◐ |
+| 0 | [Prerequisites](phase-00-prerequisites.md) | S | ◐ code done · blocked on accounts |
 | 1 | [Foundation](phase-01-foundation.md) — tenancy, auth, RBAC, audit | **XL** | ☐ |
 | 2 | [Vertical configuration](phase-02-vertical-config.md) | L | ☐ |
 | 3 | [Contacts & orders](phase-03-orders.md) | L | ☐ |

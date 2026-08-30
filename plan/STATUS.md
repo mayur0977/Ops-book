@@ -1,34 +1,42 @@
 # Status
 
 **Updated:** 2026-08-30
-**Current phase:** 0 — Prerequisites
-**Next task:** Start DLT registration and both store accounts (they have
-multi-week lead times and block launch), then decide the product name.
+**Current phase:** 0 — Prerequisites (repo work complete; blocked on your accounts)
+**Next task:** Decide the product name — it is the last open decision in Phase 0.
 
 ## Shipped
 
-- Repository scaffolded: workspace config, CLAUDE.md rule files, docs, phase plan
-- Requirements converted to `docs/PRD.md` and `docs/BRD.md`
-- ADRs 0001–0005 recorded
-- CI workflow and vertical-leak check in place
+- Repository scaffolded and pushed to `mayur0977/Ops-book` (commit `337af72`)
+- `CLAUDE.md` rule files — root + per app/package, 12 non-negotiables
+- `docs/` — PRD and BRD in Markdown, security, verticals, sync contract, ERD,
+  permissions, runbook, CI/CD
+- **`docs/design/` — design direction decided ("Ledger", ADR 0006):**
+  design system, Apple HIG behaviour guide, motion spec
+- ADRs 0001–0006
+- CI workflows with a dedicated tenant-isolation job; vertical-leak check green
+- `.claude/commands` — /status, /next, /phase-check, /wrap, /design-check
 
 ## Tested
 
-- Nothing yet — no application code exists.
+- `check:vertical-leak` passes. Nothing else — no application code exists yet.
 
 ## Broken / open
 
-- **Product name undecided.** "OpsBook" is a placeholder throughout. Decide
-  before the first EAS build; bundle identifiers are permanent.
+- **Product name undecided.** "OpsBook" is a placeholder throughout. This is the
+  last thing blocking Phase 0. Decide before the first EAS build.
 - Node is 20.10.0 locally; the project needs 24.20.0.
+- Apple, Google and DLT registrations not started — these have multi-week lead
+  times and block launch, not work.
+- Repo visibility unconfirmed; branch protection not set.
 - `/Users/mayurpatel/.git` exists — the home directory is a git repo. Unrelated
-  to this project but worth removing.
+  to this project but a real hazard.
 
 ## Next
 
-Work through `plan/phase-00-prerequisites.md`. It is mostly accounts and
-registrations, not code — start it today because the lead times are the
-long pole.
+Phase 0 is done on the code side. Once the name is decided and the accounts are
+in motion, Phase 1 (Foundation) starts — and it is the largest phase in the
+project. Read `plan/phase-01-foundation.md` before beginning; the design-first
+tasks at the top (ERD, permission matrix, sync contract) come before any code.
 
 ---
 

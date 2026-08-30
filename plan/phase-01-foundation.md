@@ -49,7 +49,14 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
 - [ ] `/health`
 
 ### Mobile
-- [ ] Expo scaffold, expo-router, NativeWind, theme tokens (light + dark)
+- [ ] Expo scaffold, expo-router, NativeWind
+- [ ] **`src/ui/theme/`** — implement the "Ledger" tokens from
+      `docs/design/design-system.md`: colour (light + dark), type scale, space,
+      radius, motion durations. One file. Everything else reads from it.
+- [ ] **`src/ui/` primitives** — `Row` (with margin rail), `Chip`, `Amount`
+      (tabular), `Field`, `SectionHeader`, `Sheet`, `EmptyState`, `Button`
+- [ ] Reanimated + gesture-handler + expo-haptics wired; `useReducedMotion()`
+      helper in place before the first animated component
 - [ ] **Prove a `@opsbook/contracts` import resolves on a physical device**
       before writing features — Metro + pnpm is the classic trap
 - [ ] Secure token storage (Keychain/Keystore, not MMKV)
