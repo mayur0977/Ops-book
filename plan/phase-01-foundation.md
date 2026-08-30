@@ -59,7 +59,11 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
       helper in place before the first animated component
 - [ ] **Prove a `@daybook/contracts` import resolves on a physical device**
       before writing features — Metro + pnpm is the classic trap
-- [ ] Secure token storage (Keychain/Keystore, not MMKV)
+- [ ] Secure token storage via `expo-secure-store` (Keychain/Keystore)
+- [ ] **Avoid `react-native-mmkv` until Phase 3** — it is not in Expo Go and
+      would force development builds before the fast loop has earned it.
+      Use AsyncStorage for cursors and preferences until then.
+      See `docs/device-testing.md`.
 - [ ] OTP login flow
 - [ ] Business create / join / switch
 - [ ] Tab shell: Home, Orders, Add, Labour, More

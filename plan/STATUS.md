@@ -2,8 +2,8 @@
 
 **Updated:** 2026-08-30
 **Current phase:** 0 — Prerequisites (repo work complete; blocked on your accounts)
-**Next task:** Confirm the bundle identifier and check store name availability,
-then start the account registrations. Phase 1 can begin in parallel.
+**Next task:** Install Node 24.20.0, run `eas login` (free), and submit DLT
+registration. Then Phase 1 — none of it is blocked.
 
 ## Shipped
 
@@ -17,7 +17,9 @@ then start the account registrations. Phase 1 can begin in parallel.
 - **Product named DayBook** and applied across the repo, both requirement
   documents and the package names
 - CI workflows with a dedicated tenant-isolation job; vertical-leak check green
-- `.claude/commands` — /status, /next, /phase-check, /wrap, /design-check
+- `.claude/commands` — /status, /next, /phase-check, /wrap, /design-check, /commit
+- **Device-testing and OTP strategies decided (ADR 0007)** — Android is free end
+  to end; no paid developer account is needed until Phase 11
 
 ## Tested
 
@@ -26,15 +28,19 @@ then start the account registrations. Phase 1 can begin in parallel.
 ## Broken / open
 
 - Node is 20.10.0 locally; the project needs 24.20.0.
-- Apple, Google and DLT registrations not started — these have multi-week lead
-  times and block launch, not work.
+- DLT registration not started — weeks of waiting, blocks launch not work.
 - Repo visibility unconfirmed; branch protection not set.
+- `.claude/settings.json` denies `Read(./.env.*)`, which also catches
+  `.env.example`. Harmless but mildly annoying; narrow the pattern when
+  convenient.
+- Cosmetic: in `.env.example` the OTP rate-limit block sits between
+  `SMS_PROVIDER` and its credentials. Regroup next time that file is touched.
 - `/Users/mayurpatel/.git` exists — the home directory is a git repo. Unrelated
   to this project but a real hazard.
 
 ## Next
 
-Phase 0 is done on the code side. Once the accounts are in motion, Phase 1
+Phase 0 is done on the code side, and no longer waits on anything paid. Phase 1
 (Foundation) starts — and it is the largest phase in the
 project. Read `plan/phase-01-foundation.md` before beginning; the design-first
 tasks at the top (ERD, permission matrix, sync contract) come before any code.

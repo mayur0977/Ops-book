@@ -50,6 +50,8 @@ pnpm dev
 | Mobile design (Apple HIG) | [`docs/design/apple-hig.md`](docs/design/apple-hig.md) |
 | Offline sync contract | [`docs/sync-contract.md`](docs/sync-contract.md) |
 | CI/CD | [`docs/ci-cd.md`](docs/ci-cd.md) |
+| Testing on a real phone, free | [`docs/device-testing.md`](docs/device-testing.md) |
+| OTP / SMS in India | [`docs/otp-sms.md`](docs/otp-sms.md) |
 | Rules for Claude | [`CLAUDE.md`](CLAUDE.md) |
 
 ## Working with Claude Code

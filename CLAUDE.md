@@ -22,6 +22,8 @@ machinery, tasks and photographic evidence — offline-first, multi-tenant.
 | Mobile design — behaviour | `docs/design/apple-hig.md` |
 | Mobile design — motion | `docs/design/motion.md` |
 | Offline sync contract | `docs/sync-contract.md` |
+| Running on a real device (free) | `docs/device-testing.md` |
+| OTP / SMS in India | `docs/otp-sms.md` |
 
 ## Structure
 

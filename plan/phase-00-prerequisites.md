@@ -22,13 +22,28 @@ Starting them late is the most common way a project like this slips at the end.
 - [x] **Design direction agreed** — "Ledger" (ADR 0006). Identity, colour, type
       and motion specified in `docs/design/`.
 
-### Accounts & registrations (start today — long lead times)
-- [ ] Apple Developer Program ($99/yr) — needed for TestFlight, not just release
-- [ ] Google Play Console ($25 once) — new personal accounts must run a
-      sustained closed test before production access
-- [ ] DLT registration (TRAI): entity, sender header, OTP template. **Without
-      this, OTP SMS does not deliver in India.**
-- [ ] Choose an SMS provider (MSG91 / Twilio / AWS SNS) and open the account
+### Accounts — free only, for now
+- [ ] Free **Expo account** (`eas login`) — no payment details, gets you real
+      Android builds
+- [ ] Free **Apple ID** — for the iOS Simulator on your Mac. Not the $99 one.
+
+See `docs/device-testing.md`. Android costs nothing until you want a Play Store
+listing, so **neither paid account is bought in Phase 0.**
+
+### Deferred deliberately — do NOT buy yet
+- [ ] ~~Apple Developer Program ($99/yr)~~ → buy at Phase 11, or whenever you
+      first need the app on someone else's iPhone
+- [ ] ~~Google Play Console ($25)~~ → buy when you want a public listing.
+      Sideloaded APKs need no account.
+
+### DLT registration — start now, then forget it
+- [ ] Submit DLT registration (TRAI): entity, sender header (`DAYBOK`), OTP
+      template. Weeks of waiting, so start it early — but it blocks **launch,
+      not development**.
+- [ ] Choose a production SMS provider — MSG91 recommended. Not needed yet.
+
+Auth is built entirely against `SMS_PROVIDER=console`, which prints the OTP to
+the server log. See `docs/otp-sms.md` and ADR 0007.
 
 ### Local toolchain
 - [ ] Node 24.20.0 (`nvm install 24.20.0 && nvm use`) — currently 20.10.0
@@ -52,24 +67,34 @@ Starting them late is the most common way a project like this slips at the end.
 - [x] Design direction agreed and documented
 - [x] Repository scaffolded, pushed, and rules in place
 - [x] Product name decided and applied throughout the repo
-- [ ] Apple and Google accounts approved
+- [x] Device-testing and OTP strategies decided (no paid accounts required)
 - [ ] DLT registration submitted (approval may still be pending)
 - [ ] `node -v` reports 24.20.0
 - [ ] `pnpm db:up` brings up all three services healthy
+- [ ] Expo Go runs a hello-world on your Android phone
 - [ ] One CI run is green on a clean checkout
+
+Paid developer accounts are **not** a Phase 0 exit criterion. They are needed at
+Phase 11.
 
 ## Blocked on you (not on code)
 
-These are the long poles and none of them are things I can do:
+Only three things, and none of them cost money:
 
-1. **Confirm the bundle identifier** (`com.mayurpatel.daybook`?) and check
-   "DayBook" is free on both stores before the first build. Permanent once published.
-2. **Apple Developer Program** — $99/yr, identity verification takes days
-3. **Google Play Console** — $25 once, then a sustained closed test before
-   production access
-4. **DLT registration** — weeks, and OTP SMS does not deliver in India without it
-5. **Node 24.20.0** locally — `nvm install 24.20.0`
-6. **Repo visibility + branch protection** — two minutes in GitHub settings
+1. **Node 24.20.0** — `nvm install 24.20.0 && nvm use`. Five minutes.
+2. **Free Expo account** — `eas login`. No card required.
+3. **Repo visibility + branch protection** — two minutes in GitHub settings.
+
+Worth starting because it is slow, but not blocking:
+
+4. **DLT registration** — weeks of waiting, and it blocks launch rather than
+   development. Submit it and move on.
+
+Deferred until Phase 11, deliberately:
+
+5. Apple $99/yr and Google $25. Confirm the bundle identifier
+   (`com.mayurpatel.daybook`?) and check "DayBook" is free on both stores
+   *before* you register either — the identifier is permanent once published.
 
 ## Out of scope
 
@@ -80,3 +105,7 @@ registrations need chasing, not company.
 
 `SMS_PROVIDER=console` means all of authentication can be built and tested in
 Phase 1 before DLT approval lands. The registration blocks *launch*, not *work*.
+
+Android is the development and pilot platform. It is free end to end: Expo Go
+early, then sideloaded APKs from EAS free-tier builds, then FCM push through a
+free Firebase project. iOS joins when there is a reason to pay for it.
