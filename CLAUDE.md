@@ -24,6 +24,7 @@ machinery, tasks and photographic evidence — offline-first, multi-tenant.
 | Offline sync contract | `docs/sync-contract.md` |
 | Running on a real device (free) | `docs/device-testing.md` |
 | OTP / SMS in India | `docs/otp-sms.md` |
+| What it costs, and when | `docs/costs.md` |
 
 ## Structure
 
