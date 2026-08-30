@@ -1,4 +1,4 @@
-# @opsbook/verticals
+# @daybook/verticals
 
 Per-industry seed packs. **This is the only place in the workspace where
 industry-specific vocabulary is allowed.** CI enforces that.

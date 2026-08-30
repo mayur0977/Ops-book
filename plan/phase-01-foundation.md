@@ -57,13 +57,13 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
       (tabular), `Field`, `SectionHeader`, `Sheet`, `EmptyState`, `Button`
 - [ ] Reanimated + gesture-handler + expo-haptics wired; `useReducedMotion()`
       helper in place before the first animated component
-- [ ] **Prove a `@opsbook/contracts` import resolves on a physical device**
+- [ ] **Prove a `@daybook/contracts` import resolves on a physical device**
       before writing features — Metro + pnpm is the classic trap
 - [ ] Secure token storage (Keychain/Keystore, not MMKV)
 - [ ] OTP login flow
 - [ ] Business create / join / switch
 - [ ] Tab shell: Home, Orders, Add, Labour, More
-- [ ] Typed API client on `@opsbook/contracts`
+- [ ] Typed API client on `@daybook/contracts`
 
 ### Tests
 - [ ] **Cross-tenant 404 test** on every collection endpoint (the one that matters)

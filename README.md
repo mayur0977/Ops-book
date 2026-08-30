@@ -1,4 +1,4 @@
-# OpsBook
+# DayBook
 
 A mobile-first operations tracker for small production and service businesses —
 orders, payments, expenses, materials, **labour attendance and wages**,
@@ -6,8 +6,8 @@ machinery and photographic evidence. Offline-first, multi-tenant, and
 industry-agnostic: a furniture workshop, a fabrication unit and a garage run
 the same core with different configuration.
 
-> **Working name.** "OpsBook" is a placeholder. Decide the real name before the
-> first EAS build — bundle identifiers are permanent.
+> **DayBook** — the bookkeeping term for the *book of original entry*: the
+> first place a transaction is written down. Which is exactly what this is.
 
 ## Structure
 

@@ -1,4 +1,4 @@
-# @opsbook/contracts
+# @daybook/contracts
 
 Zod 4 schemas for every API request and response, plus the types inferred from
 them. This package **is** the API contract.

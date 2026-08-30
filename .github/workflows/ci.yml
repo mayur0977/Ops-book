@@ -44,12 +44,12 @@ jobs:
       postgres:
         image: postgres:18-alpine
         env:
-          POSTGRES_USER: opsbook
+          POSTGRES_USER: daybook
           POSTGRES_PASSWORD: ci
-          POSTGRES_DB: opsbook_test
+          POSTGRES_DB: daybook_test
         ports: ["5432:5432"]
         options: >-
-          --health-cmd "pg_isready -U opsbook"
+          --health-cmd "pg_isready -U daybook"
           --health-interval 5s --health-timeout 5s --health-retries 10
       redis:
         image: redis:8-alpine
@@ -58,7 +58,7 @@ jobs:
           --health-cmd "redis-cli ping"
           --health-interval 5s --health-timeout 3s --health-retries 10
     env:
-      DATABASE_URL: postgresql://opsbook:ci@localhost:5432/opsbook_test
+      DATABASE_URL: postgresql://daybook:ci@localhost:5432/daybook_test
       REDIS_URL: redis://localhost:6379
       JWT_ACCESS_SECRET: ci-access-secret-not-a-real-secret
       JWT_REFRESH_SECRET: ci-refresh-secret-not-a-real-secret
@@ -88,15 +88,15 @@ jobs:
       postgres:
         image: postgres:18-alpine
         env:
-          POSTGRES_USER: opsbook
+          POSTGRES_USER: daybook
           POSTGRES_PASSWORD: ci
-          POSTGRES_DB: opsbook_test
+          POSTGRES_DB: daybook_test
         ports: ["5432:5432"]
         options: >-
-          --health-cmd "pg_isready -U opsbook"
+          --health-cmd "pg_isready -U daybook"
           --health-interval 5s --health-timeout 5s --health-retries 10
     env:
-      DATABASE_URL: postgresql://opsbook:ci@localhost:5432/opsbook_test
+      DATABASE_URL: postgresql://daybook:ci@localhost:5432/daybook_test
       JWT_ACCESS_SECRET: ci-access-secret-not-a-real-secret
       JWT_REFRESH_SECRET: ci-refresh-secret-not-a-real-secret
       SMS_PROVIDER: console
@@ -110,7 +110,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @opsbook/api test:tenant
+      - run: pnpm --filter @daybook/api test:tenant
 
   security:
     name: Dependency audit

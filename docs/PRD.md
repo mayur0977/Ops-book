@@ -1,6 +1,6 @@
-> Converted from `Documents/OpsBook_PRD_v3_Generic_Multi_Vertical.docx`. **The Word file is the formatted deliverable; this Markdown copy is the version-controlled source of truth for day-to-day work.** If they disagree, regenerate this file.
+> Converted from `Documents/DayBook_PRD_v3.docx`. **The Word file is the formatted deliverable; this Markdown copy is the version-controlled source of truth for day-to-day work.** If they disagree, regenerate this file.
 
-# OpsBook Operations Platform — PRD
+# DayBook Operations Platform — PRD
 
 Product Requirements Document | iOS + Android (Web deferred) | Multi-vertical, multi-tenant
 
@@ -8,7 +8,7 @@ Version 3.0 — Generic Multi-Vertical Baseline | 30 August 2026 | Supersedes v2
 
 ## 1. Executive Summary
 
-OpsBook is a mobile-first operations application for small production and service businesses. It records the day as it happens: orders, customers, payments, transport, materials and landed costs, labour attendance and wages, machinery, expenses, tasks, reminders and photographic evidence.
+DayBook is a mobile-first operations application for small production and service businesses. It records the day as it happens: orders, customers, payments, transport, materials and landed costs, labour attendance and wages, machinery, expenses, tasks, reminders and photographic evidence.
 
 The platform is deliberately industry-agnostic. A furniture workshop, a fabrication unit, a tailoring business or a general trade service each configure the same core through a vertical configuration layer rather than through separate code. The furniture business that originated these requirements is tenant number one, not the product.
 
@@ -519,7 +519,7 @@ Future scope beyond the first release: quotations, invoices and GST, WhatsApp Bu
 
 | Area | v2.0 | v3.0 |
 | --- | --- | --- |
-| Product identity | Atharv Furniture Operations, single business. | OpsBook, multi-vertical product. The furniture business is tenant one and the pilot. |
+| Product identity | Atharv Furniture Operations, single business. | DayBook, multi-vertical product. The furniture business is tenant one and the pilot. |
 | Domain model | Furniture attributes as fixed columns; fixed categories and statuses. | Vertical configuration layer: field definitions, configurable statuses, editable taxonomies, module toggles, terminology map (Section 5). |
 | Delivery structure | Not specified. | One repository holding two deployable applications plus shared contract, calculation and configuration packages. Contract drift is prevented by construction rather than detected by a build check (Section 3). |
 | Platform scope | iOS, Android and web together. | iOS and Android first; web deferred and re-scoped as a separate application (Section 17). |

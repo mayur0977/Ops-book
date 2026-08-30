@@ -1,4 +1,4 @@
-# @opsbook/config
+# @daybook/config
 
 Shared `tsconfig`, ESLint and Prettier configuration for every app and package.
 

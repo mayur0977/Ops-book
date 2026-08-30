@@ -31,14 +31,14 @@ jobs:
 
       # NOTE: build context is the REPO ROOT — the image needs packages/*.
       - name: Build image
-        run: docker build -f apps/api/Dockerfile -t opsbook-api:${{ github.sha }} .
+        run: docker build -f apps/api/Dockerfile -t daybook-api:${{ github.sha }} .
 
       # Migrations run as a SEPARATE, reviewable step, before the new image
       # takes traffic. Reversible, or accompanied by a written backout plan.
       - name: Run migrations
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: pnpm --filter @opsbook/api db:migrate
+        run: pnpm --filter @daybook/api db:migrate
 
       - name: Deploy
         env:

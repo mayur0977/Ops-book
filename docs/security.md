@@ -68,7 +68,7 @@ automatically.
 ## 4. Input & output
 
 - Every request body, query and param is parsed by a Zod schema from
-  `@opsbook/contracts`. Unvalidated input never reaches a service.
+  `@daybook/contracts`. Unvalidated input never reaches a service.
 - Reject unknown keys (`.strict()`) on write endpoints.
 - Structured error envelope; no stack traces, no ORM errors, no SQL to clients.
 - Body size limits, and a hard cap on batch sizes for the sync endpoint.

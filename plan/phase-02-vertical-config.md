@@ -21,7 +21,7 @@ custom fields. Building them first means retrofitting all of them.
 ### Packages
 - [ ] `packages/verticals` — seed pack type + loader
 - [ ] Seed: `furniture`, `fabrication`, `general`
-- [ ] `@opsbook/core` — custom-field validation against definitions
+- [ ] `@daybook/core` — custom-field validation against definitions
 
 ### API
 - [ ] Run the seed pack once at business creation

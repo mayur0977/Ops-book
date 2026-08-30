@@ -4,15 +4,15 @@ services:
   postgres:
     image: postgres:18-alpine
     environment:
-      POSTGRES_USER: opsbook
+      POSTGRES_USER: daybook
       POSTGRES_PASSWORD: local_dev_only
-      POSTGRES_DB: opsbook_dev
+      POSTGRES_DB: daybook_dev
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U opsbook"]
+      test: ["CMD-SHELL", "pg_isready -U daybook"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -33,7 +33,7 @@ services:
     image: minio/minio:latest
     command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: opsbook
+      MINIO_ROOT_USER: daybook
       MINIO_ROOT_PASSWORD: local_dev_only
     ports:
       - "9000:9000"

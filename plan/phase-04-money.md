@@ -17,7 +17,7 @@ Wages (Phase 5) are built on the payment primitives defined here.
 - [ ] `expense_categories` already seeded in Phase 2
 
 ### Core
-- [ ] `@opsbook/core/money.ts` — add, subtract, allocate, format (decimal.js)
+- [ ] `@daybook/core/money.ts` — add, subtract, allocate, format (decimal.js)
 - [ ] Order balance calculation
 - [ ] Per-payer contribution aggregation
 

@@ -11,7 +11,7 @@ happens; web is for owner/partner review, reporting and administration.
 
 Ship mobile first. Web is out of scope until after mobile UAT. When it comes it
 enters this repository as `apps/web` — a Next.js application importing the same
-`@opsbook/contracts` and `@opsbook/core`.
+`@daybook/contracts` and `@daybook/core`.
 
 ## Consequences
 

@@ -16,7 +16,7 @@ app/                  expo-router file routes
   (auth)/  (tabs)/{index,orders,add,labour,more}
   orders/[id]/  labour/{muster,[workerId],wages}
 src/
-  api/                typed client built on @opsbook/contracts
+  api/                typed client built on @daybook/contracts
   offline/            db.ts  outbox.ts  sync.ts  conflicts.ts
   features/<domain>/  screens + components for one domain
   ui/                 design-system primitives + theme tokens
@@ -71,9 +71,9 @@ shadows. Quiet, precise, legible — deliberately not a fintech dashboard.
 - **Offline-first, not offline-tolerant.** A screen that writes must work with
   the network off. Build the offline path first, treat online as the fast case.
   Non-negotiable for the muster roll.
-- **Money arrives as a string.** Parse with `decimal.js` from `@opsbook/core`.
+- **Money arrives as a string.** Parse with `decimal.js` from `@daybook/core`.
   Never `parseFloat` an amount.
-- **Wage figures use shared `@opsbook/core` functions** — the same ones the
+- **Wage figures use shared `@daybook/core` functions** — the same ones the
   server runs at settlement. Never reimplement the maths here; two
   implementations that drift is an argument with a worker about their pay.
 - Every list needs loading, empty, error, offline and content states. An empty

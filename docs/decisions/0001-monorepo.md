@@ -21,7 +21,7 @@ after the fact — both apps import the same Zod schemas, so a breaking change
 fails to compile in the same commit. The codegen step, the published contract
 artefact and the drift check are all deleted.
 
-`@opsbook/core` lets the muster roll compute a payable wage offline using the
+`@daybook/core` lets the muster roll compute a payable wage offline using the
 *same function* the server runs at settlement. Two implementations of wage
 arithmetic that drift apart is a dispute with a worker.
 

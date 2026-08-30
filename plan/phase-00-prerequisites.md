@@ -13,9 +13,12 @@ Starting them late is the most common way a project like this slips at the end.
 ## Tasks
 
 ### Decisions
-- [ ] **Decide the product name.** Replace "OpsBook" everywhere. Bundle
-      identifiers are permanent once published. ← **only open decision**
-- [ ] Reserve bundle identifiers: `com.<you>.<name>` for iOS and Android.
+- [x] **Product name decided: DayBook** — the bookkeeping term for the *book of
+      original entry*, the first place a transaction is written down. Applied
+      throughout the repo, the requirement documents and the package names.
+- [ ] Reserve bundle identifiers — proposed `com.mayurpatel.daybook` for both
+      platforms. Confirm, then register. **Permanent once published.**
+- [ ] Check name availability: App Store, Play Store, domain, trademark
 - [x] **Design direction agreed** — "Ledger" (ADR 0006). Identity, colour, type
       and motion specified in `docs/design/`.
 
@@ -48,7 +51,7 @@ Starting them late is the most common way a project like this slips at the end.
 
 - [x] Design direction agreed and documented
 - [x] Repository scaffolded, pushed, and rules in place
-- [ ] Product name decided and applied throughout the repo
+- [x] Product name decided and applied throughout the repo
 - [ ] Apple and Google accounts approved
 - [ ] DLT registration submitted (approval may still be pending)
 - [ ] `node -v` reports 24.20.0
@@ -59,8 +62,8 @@ Starting them late is the most common way a project like this slips at the end.
 
 These are the long poles and none of them are things I can do:
 
-1. **Product name** — everything else in Phase 0 is done and this is the last
-   decision. Bundle identifiers are permanent once published.
+1. **Confirm the bundle identifier** (`com.mayurpatel.daybook`?) and check
+   "DayBook" is free on both stores before the first build. Permanent once published.
 2. **Apple Developer Program** — $99/yr, identity verification takes days
 3. **Google Play Console** — $25 once, then a sustained closed test before
    production access

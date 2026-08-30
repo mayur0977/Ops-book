@@ -27,7 +27,7 @@ business gets real daily value the moment it lands.
 - [ ] `holiday_calendar`
 - [ ] Optional `attendance_order_allocations` for job costing
 
-### Core — shared, and the reason `@opsbook/core` exists
+### Core — shared, and the reason `@daybook/core` exists
 - [ ] `wages.ts`: earned-per-period for all four wage types
       - `daily` — (full + half × factor) × rate + OT
       - `hourly` — normal × rate + OT hours × rate × multiplier
@@ -89,6 +89,6 @@ wage ledger — say so in the app so nobody files from it.
 
 ## Notes
 
-Wage figures shown on-device use the **same** `@opsbook/core` functions the
+Wage figures shown on-device use the **same** `@daybook/core` functions the
 server runs at settlement. Never reimplement the maths in the app: two
 implementations that drift is an argument with a worker about their pay.

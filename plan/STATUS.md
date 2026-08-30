@@ -2,7 +2,8 @@
 
 **Updated:** 2026-08-30
 **Current phase:** 0 — Prerequisites (repo work complete; blocked on your accounts)
-**Next task:** Decide the product name — it is the last open decision in Phase 0.
+**Next task:** Confirm the bundle identifier and check store name availability,
+then start the account registrations. Phase 1 can begin in parallel.
 
 ## Shipped
 
@@ -13,6 +14,8 @@
 - **`docs/design/` — design direction decided ("Ledger", ADR 0006):**
   design system, Apple HIG behaviour guide, motion spec
 - ADRs 0001–0006
+- **Product named DayBook** and applied across the repo, both requirement
+  documents and the package names
 - CI workflows with a dedicated tenant-isolation job; vertical-leak check green
 - `.claude/commands` — /status, /next, /phase-check, /wrap, /design-check
 
@@ -22,8 +25,6 @@
 
 ## Broken / open
 
-- **Product name undecided.** "OpsBook" is a placeholder throughout. This is the
-  last thing blocking Phase 0. Decide before the first EAS build.
 - Node is 20.10.0 locally; the project needs 24.20.0.
 - Apple, Google and DLT registrations not started — these have multi-week lead
   times and block launch, not work.
@@ -33,8 +34,8 @@
 
 ## Next
 
-Phase 0 is done on the code side. Once the name is decided and the accounts are
-in motion, Phase 1 (Foundation) starts — and it is the largest phase in the
+Phase 0 is done on the code side. Once the accounts are in motion, Phase 1
+(Foundation) starts — and it is the largest phase in the
 project. Read `plan/phase-01-foundation.md` before beginning; the design-first
 tasks at the top (ERD, permission matrix, sync contract) come before any code.
 

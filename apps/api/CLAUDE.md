@@ -18,7 +18,7 @@ through the other module's service, never straight into its tables.
 
 ## Rules specific to this app
 
-- **Schemas come from `@opsbook/contracts`.** Do not define a request or
+- **Schemas come from `@daybook/contracts`.** Do not define a request or
   response shape locally — the mobile app imports the same object.
 - **Every route declares its permission** in `policy.ts`. Authorization is never
   inline in a handler.

@@ -1,6 +1,6 @@
-> Converted from `Documents/OpsBook_BRD_v3_Generic_Multi_Vertical.docx`. **The Word file is the formatted deliverable; this Markdown copy is the version-controlled source of truth for day-to-day work.** If they disagree, regenerate this file.
+> Converted from `Documents/DayBook_BRD_v3.docx`. **The Word file is the formatted deliverable; this Markdown copy is the version-controlled source of truth for day-to-day work.** If they disagree, regenerate this file.
 
-# OpsBook Operations Platform — BRD
+# DayBook Operations Platform — BRD
 
 Business Requirements Document | Business case, workflows, controls and KPIs
 
@@ -10,7 +10,7 @@ Version 3.0 — Generic Multi-Vertical Baseline | 30 August 2026 | Supersedes v2
 
 Small production and service businesses run their day through a series of loosely recorded events: orders taken, materials purchased, transport paid, labour attended, machinery serviced, expenses met by whoever happened to have cash. The record of those events is fragmented across memory, paper registers, message threads and photographs on several phones.
 
-OpsBook is a shared, date-driven operations system for exactly that situation. It is built to be adopted by any trade rather than a single industry: a furniture workshop, a fabrication unit, a tailoring business, a printing press or a general service operation configure the same platform to their own vocabulary, categories and item attributes.
+DayBook is a shared, date-driven operations system for exactly that situation. It is built to be adopted by any trade rather than a single industry: a furniture workshop, a fabrication unit, a tailoring business, a printing press or a general service operation configure the same platform to their own vocabulary, categories and item attributes.
 
 The originating business — a teakwood and custom furniture operation building both to customer requirement and to internally researched designs — is the pilot tenant and the first production user. Its requirements shaped the platform; they no longer define its boundaries.
 

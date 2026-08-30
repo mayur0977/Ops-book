@@ -1,12 +1,12 @@
-# OpsBook — Operations Platform
+# DayBook — Operations Platform
 
 A mobile-first operations tracker for small production and service businesses.
 Records orders, payments, expenses, materials, **labour attendance and wages**,
 machinery, tasks and photographic evidence — offline-first, multi-tenant.
 
-> **Product name is a placeholder.** "OpsBook" appears in `package.json`,
-> package names and docs. If it changes, it is one find-and-replace — do it
-> before the first EAS build, because bundle identifiers are permanent.
+> **Name:** DayBook — the bookkeeping term for the book of original entry,
+> the first place a transaction is written down. Decided 2026-08-30 (Phase 0).
+> Bundle identifiers derive from it and are permanent once published.
 
 ## Source of truth
 

@@ -12,7 +12,7 @@ wages. JavaScript numbers are IEEE-754 floats; `0.1 + 0.2 !== 0.3`.
 
 - **Storage:** `NUMERIC(14,2)` in Postgres
 - **Transport:** JSON **string** — never a JSON number
-- **Computation:** `decimal.js`, in `@opsbook/core`, on both server and device
+- **Computation:** `decimal.js`, in `@daybook/core`, on both server and device
 - **Currency:** from `businesses.currency`, default INR
 
 ## Consequences
