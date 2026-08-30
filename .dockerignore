@@ -1,0 +1,16 @@
+# The API image builds from the REPO ROOT (it needs packages/*),
+# so exclude everything the server does not need.
+node_modules
+**/node_modules
+apps/mobile
+docs
+plan
+Documents
+.git
+.github
+.claude
+.turbo
+**/dist
+**/.expo
+**/coverage
+*.md

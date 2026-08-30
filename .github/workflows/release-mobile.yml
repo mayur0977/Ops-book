@@ -1,0 +1,46 @@
+name: Release Mobile
+
+on:
+  push:
+    branches: [main]          # -> EAS Update, preview channel
+    tags: ["app-v*"]          # -> production build + store submission
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: "24.20.0"
+  PNPM_VERSION: "11.24.0"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: 23.0.0
+          token: ${{ secrets.EXPO_TOKEN }}
+      - run: pnpm install --frozen-lockfile
+
+      # JS-only changes ship without a store review.
+      - name: EAS Update (preview)
+        if: github.ref == 'refs/heads/main'
+        run: eas update --branch preview --message "${{ github.event.head_commit.message }}"
+        working-directory: apps/mobile
+
+      # Native changes need a full build and store submission.
+      - name: EAS production build
+        if: startsWith(github.ref, 'refs/tags/app-v')
+        run: eas build --platform all --profile production --non-interactive
+        working-directory: apps/mobile
+
+      - name: Submit to stores
+        if: startsWith(github.ref, 'refs/tags/app-v')
+        run: eas submit --platform all --profile production --non-interactive
+        working-directory: apps/mobile

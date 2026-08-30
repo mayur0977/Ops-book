@@ -1,0 +1,46 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+dist/
+build/
+.turbo/
+*.tsbuildinfo
+
+# env & secrets  — never commit these
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p8
+*.p12
+*.mobileprovision
+google-services.json
+GoogleService-Info.plist
+
+# expo / react native
+.expo/
+apps/mobile/ios/
+apps/mobile/android/
+*.jks
+*.keystore
+
+# test & coverage
+coverage/
+.nyc_output/
+
+# local data
+*.sqlite
+*.sqlite3
+pgdata/
+miniodata/
+
+# editor & os
+.DS_Store
+.idea/
+*.swp
+
+# claude local overrides (personal, not shared)
+.claude/settings.local.json
