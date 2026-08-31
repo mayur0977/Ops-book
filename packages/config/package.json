@@ -1,0 +1,17 @@
+{
+  "name": "@daybook/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./oxlint": "./oxlintrc.base.json",
+    "./oxlint/client-safe": "./oxlintrc.client-safe.json",
+    "./prettier": "./prettier.config.js",
+    "./tsconfig/base": "./tsconfig.base.json",
+    "./tsconfig/library": "./tsconfig.library.json",
+    "./tsconfig/node": "./tsconfig.node.json"
+  },
+  "dependencies": {
+    "oxlint": "1.80.0"
+  }
+}

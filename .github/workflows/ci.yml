@@ -17,7 +17,7 @@ jobs:
   # Cheap, whole-workspace checks. These catch cross-package breakage that
   # filtered jobs would miss.
   check:
-    name: Typecheck, lint, vertical leak
+    name: Typecheck, lint, invariants
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -35,6 +35,8 @@ jobs:
       - run: pnpm lint
       - name: No vertical vocabulary in core code
         run: pnpm check:vertical-leak
+      - name: Shared packages stay client-safe
+        run: pnpm check:client-safe
 
   # Only the packages affected by this change.
   test:

@@ -22,9 +22,11 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
       `Idempotency-Key` + `client_uuid` land in this phase as designed
 
 ### Workspace
-- [ ] `packages/config` — tsconfig, eslint (incl. restricted-imports rule), prettier
-- [ ] `packages/contracts` — Zod setup, money refinement, error envelope
-- [ ] `packages/core` — `money.ts` (decimal.js), permission evaluation
+- [x] `packages/config` — tsconfig, lint (incl. restricted-imports rule), prettier.
+      Linter is **oxlint**, not ESLint — typescript-eslint cannot load against
+      TypeScript 7. See ADR 0008.
+- [x] `packages/contracts` — Zod setup, money refinement, error envelope
+- [x] `packages/core` — `money.ts` (decimal.js), permission evaluation
 
 ### Database
 - [ ] Drizzle + migration setup, seed script

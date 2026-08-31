@@ -1,0 +1,30 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
+  "extends": ["./oxlintrc.base.json"],
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          { "name": "node:fs" },
+          { "name": "node:path" },
+          { "name": "node:crypto" },
+          { "name": "node:child_process" },
+          { "name": "node:os" },
+          { "name": "node:process" },
+          { "name": "fs" },
+          { "name": "path" },
+          { "name": "crypto" },
+          { "name": "child_process" },
+          { "name": "os" },
+          { "name": "process" },
+          { "name": "pg" },
+          { "name": "postgres" },
+          { "name": "dotenv" },
+          { "name": "drizzle-orm/node-postgres" }
+        ],
+        "patterns": ["node:*", "drizzle-orm/*", "**/db/**", "**/platform/**"]
+      }
+    ]
+  }
+}

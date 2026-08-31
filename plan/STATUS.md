@@ -1,64 +1,69 @@
 # Status
 
-**Updated:** 2026-08-30
-**Current phase:** 0 — Prerequisites. All repo work done; nothing paid is
-required to continue.
-**Next task:** Install Node 24.20.0, run `eas login` (free), submit DLT
-registration. Then start Phase 1 — none of it is blocked.
+**Updated:** 2026-08-31
+**Current phase:** 1 — Foundation. Design tasks and the whole Workspace block
+are done; Database is next.
+**Next task:** `packages/api` does not exist yet. Start the Database block —
+Drizzle setup, the auth and tenancy tables, and `withTenant()` — against real
+Postgres via `pnpm db:up`.
 
 ## Shipped
 
-**Repository** — monorepo scaffolded and pushed to `mayur0977/Ops-book`.
-Seven commits so far, starting at `337af72`.
+**Phase 1 Workspace block — complete, and this is the first application code in
+the repo.** Everything before this commit was documentation.
 
-**Rules** — `CLAUDE.md` at root plus one per app and package. Twelve
-non-negotiables covering tenant isolation, decimal money, vertical-agnostic
-core, client-safe shared packages, and design tokens. Working agreement:
-nothing reaches git without approval; `/commit` is that approval.
+**`@daybook/config`** — the shared toolchain. `tsconfig.base.json` lives here
+and the root file extends it, not the reverse: a `../../` inside the package
+resolves against the `node_modules` symlink and breaks the moment a package
+consumes it. That was found and fixed, not theorised.
 
-**Requirements** — PRD and BRD generalised from the furniture-specific v2 to a
-multi-vertical baseline, regenerated as `Documents/DayBook_*_v3.docx` and
-committed as Markdown in `docs/`.
+**`@daybook/contracts`** — Zod 4 schemas: money as a validated decimal string,
+the error envelope with its status map, E.164 phone, `client_uuid`,
+`Idempotency-Key`, the 39-key permission catalogue, and the auth and business
+request/response shapes. 34 tests.
 
-**Product named DayBook** — the bookkeeping term for the book of original entry.
-Applied across the repo, both requirement documents and all package names.
+**`@daybook/core`** — `money.ts` on decimal.js (add, subtract, sum, multiply,
+compare, and a `splitMoney` that always reconciles to the paisa) and permission
+evaluation implementing the tri-state resolution order plus invariants 2, 3
+and 4 from `docs/permissions.md`. Default role grants transcribed from the
+matrix. 42 tests.
 
-**Design decided** — "Ledger" (ADR 0006). Ruled hairlines, a coloured margin
-rail per row, tabular figures, indigo ink accent. Full system, Apple HIG
-behaviour guide and motion spec in `docs/design/`.
+**Client-safety is enforced twice.** `scripts/check-client-safe.mjs` checks the
+source *and* the declared dependencies — which no linter can see — and runs as
+its own CI step next to the vertical-leak check. Both guards were verified with
+a deliberate violation, not assumed.
 
-**Delivery approach decided (ADR 0007)** — Android is free end to end, so no
-paid developer account is needed until Phase 11. Auth is built against
-`SMS_PROVIDER=console`; DLT registration runs in the background.
-
-**Plan** — 12 phase files with testable exit criteria, and `/status`, `/next`,
-`/phase-check`, `/wrap`, `/design-check`, `/commit`.
-
-**CI** — three workflows, with tenant isolation as its own job. Vertical-leak
-check green.
-
-**ADRs 0001–0007** — monorepo, Drizzle over Prisma, web deferred, config-as-data,
-money representation, design direction, OTP delivery.
+**ADR 0008 — oxlint instead of ESLint.** `typescript-eslint` throws at module
+load against TypeScript 7 (`does not support TS 7.0`), in its latest release and
+its canary alike. The choice was TypeScript 6 or a different linter; oxlint won
+because it never loads the TypeScript API, so the coupling cannot break again.
 
 ## Tested
 
-`check:vertical-leak` passes. Nothing else — no application code exists yet.
+`pnpm typecheck`, `pnpm lint`, `pnpm test` (76 tests), `pnpm check:vertical-leak`
+and `pnpm check:client-safe` all green locally on Node 24.20.0. `pnpm peers check`
+reports no issues — the tree has no unmet peer dependency.
+
+Not yet tested: anything touching a database, an HTTP handler or a device. None
+of it exists.
 
 ## Broken / open
 
-**Blocking Phase 0, all free:**
-- Node is 20.10.0 locally; the project needs 24.20.0
+**Phase 0 leftovers:**
+- Node is now 24.20.0 and matches `.nvmrc` — that blocker is cleared
 - No Expo account yet (`eas login`)
 - Repo visibility unconfirmed; branch protection not set
-
-**Slow, so start it, but not blocking:**
 - DLT registration not submitted — weeks of waiting, blocks launch not work
 
-**Minor:**
-- `.claude/settings.json` denies `Read(./.env.*)`, which also catches the
-  committed, safe `.env.example`. Narrow to `Read(./.env)` when convenient.
-- In `.env.example` the OTP rate-limit block sits between `SMS_PROVIDER` and its
-  credentials. Regroup next time that file is touched.
+**New, small:**
+- `.claude/settings.json` still denies `Read(./.env.*)`, which catches the safe,
+  committed `.env.example`. Narrowing it needs a human — editing that file is
+  blocked from inside a session.
+- `.github/workflows/ci.yml` runs on `pull_request` and on pushes to `main`
+  only. Under git-flow the integration branch is `develop`, so pushes there
+  currently run no CI. One line to fix; not done unprompted.
+- oxlint has no type-aware rules. Nothing enforced needs them today. Revisit
+  ESLint when typescript-eslint supports TS 7 (their issue #10940).
 
 **Outside this project, but a real hazard:**
 - `/Users/mayurpatel/.git` exists — the home directory is a git repository with
@@ -67,18 +72,24 @@ money representation, design direction, OTP delivery.
 
 ## Git
 
-- `main` and `origin/main` are level; working tree clean
-- Branch protection is not yet enabled, so `main` currently takes direct pushes
+- On `feature/phase-01-foundation`, branched from `develop`
+- Changes are staged in the working tree and **not committed** — awaiting review
 
 ## Next
 
-Phase 0 needs only the three free items above. Phase 1 (Foundation) can start in
-parallel and is the largest phase in the project — tenancy, auth, RBAC, audit and
-the idempotency groundwork that makes Phase 9 tractable.
+The Database block, in this order, because each step is testable before the
+next one is worth writing:
 
-Read `plan/phase-01-foundation.md` first. Its opening tasks are deliberately
-design-first: freeze the ERD, the permission matrix and the sync contract before
-any code. That is the PRD's own first instruction and the one most often skipped.
+1. Drizzle + drizzle-kit setup and the first migration
+2. `users`, `sessions`, `refresh_tokens`, `otp_requests` — no tenancy yet
+3. `businesses`, `business_members`, roles and permissions; seed the catalogue
+   from `@daybook/contracts` and the grants from `@daybook/core`
+4. `audit_logs` and `idempotency_keys`
+5. RLS **enabled and forced** on every tenant table, `USING` *and* `WITH CHECK`
+6. `withTenant(businessId, fn)`, then the test that the app role lacks
+   `BYPASSRLS` — silently catastrophic if wrong, so it is a test, not a habit
+
+Read `docs/ERD.md` first; it is the design this block implements.
 
 ---
 
