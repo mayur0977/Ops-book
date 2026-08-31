@@ -10,9 +10,28 @@ import { seedPermissions } from '../src/db/seed.js';
  * the suite must read the same name the workflow provides, or it silently falls
  * back to a local default and fails to authenticate.
  */
-export const OWNER_DATABASE_URL =
-  process.env.DATABASE_URL ??
-  'postgresql://daybook:local_dev_only@localhost:5432/daybook_test';
+const LOCAL_FALLBACK = 'postgresql://daybook:local_dev_only@localhost:5432/daybook_test';
+
+/**
+ * Under CI the fallback is refused. It has already hidden this bug twice: once
+ * because the variable was read under the wrong name, and once because turbo
+ * stripped it for not being declared in turbo.json. Both times the suite
+ * quietly used a localhost default and failed with an authentication error a
+ * long way from the cause. A convenience default belongs on a developer's
+ * machine and nowhere else.
+ */
+export const OWNER_DATABASE_URL = (() => {
+  const fromEnv = process.env.DATABASE_URL;
+  if (fromEnv) return fromEnv;
+  if (process.env.CI) {
+    throw new Error(
+      'DATABASE_URL is not set. In CI this must come from the workflow — check ' +
+        "that turbo.json declares it under the task's `env`, or turbo will " +
+        'strip it before the task runs.',
+    );
+  }
+  return LOCAL_FALLBACK;
+})();
 
 /**
  * The unprivileged role the API uses, derived from the owner URL so the two
