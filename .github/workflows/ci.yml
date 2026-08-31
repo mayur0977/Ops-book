@@ -22,15 +22,20 @@ jobs:
     name: Typecheck, lint, invariants
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0    # turbo --filter needs history
-      - uses: pnpm/action-setup@v4
+      # pnpm/action-setup must precede setup-node: the pnpm cache cannot be
+      # resolved before pnpm exists on the PATH.
+      - uses: pnpm/action-setup@v6
         with:
           version: ${{ env.PNPM_VERSION }}
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
+          # Explicit, and must stay explicit. setup-node v6 narrowed automatic
+          # caching to npm only, so dropping this line silently disables the
+          # pnpm store cache rather than failing.
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
@@ -68,13 +73,13 @@ jobs:
       JWT_REFRESH_SECRET: ci-refresh-secret-not-a-real-secret
       SMS_PROVIDER: console
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: ${{ env.PNPM_VERSION }}
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
@@ -104,7 +109,7 @@ jobs:
       JWT_REFRESH_SECRET: ci-refresh-secret-not-a-real-secret
       SMS_PROVIDER: console
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       # hashFiles() is only available at step level, never in a job-level `if`
       # — using it there stops the whole workflow compiling. Guarding here also
@@ -121,11 +126,11 @@ jobs:
           fi
 
       - if: steps.detect.outputs.ready == 'true'
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           version: ${{ env.PNPM_VERSION }}
       - if: steps.detect.outputs.ready == 'true'
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
@@ -138,11 +143,11 @@ jobs:
     name: Dependency audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           version: ${{ env.PNPM_VERSION }}
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
