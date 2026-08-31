@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1788195197084,
+      "tag": "0000_round_mandroid",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788195198084,
+      "tag": "0001_rls_and_audit_guards",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788195199084,
+      "tag": "0002_app_role_and_grants",
+      "breakpoints": true
+    }
+  ]
+}

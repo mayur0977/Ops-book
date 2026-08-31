@@ -29,15 +29,18 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
 - [x] `packages/core` — `money.ts` (decimal.js), permission evaluation
 
 ### Database
-- [ ] Drizzle + migration setup, seed script
-- [ ] `users`, `sessions`, `refresh_tokens`, `otp_requests`
-- [ ] `businesses`, `business_members`, `roles`, `permissions`,
+- [x] Drizzle + migration setup, seed script
+- [x] `users`, `sessions`, `refresh_tokens`, `otp_requests`
+- [x] `businesses`, `business_members`, `roles`, `permissions`,
       `role_permissions`, `member_permissions`
-- [ ] `audit_logs` (append-only: no UPDATE/DELETE grant)
-- [ ] `idempotency_keys`
-- [ ] **RLS enabled AND forced** on every tenant table
-- [ ] `withTenant(businessId, fn)` helper setting `app.business_id`
-- [ ] Verify the app DB role lacks `BYPASSRLS`
+- [x] `audit_logs` (append-only: no UPDATE/DELETE grant, **and** a trigger —
+      the migration owner bypasses grants, so the grant alone was not enough)
+- [x] `idempotency_keys`
+- [x] **RLS enabled AND forced** on every tenant table (7 tables, verified by test)
+- [x] `withTenant(businessId, fn)` helper setting `app.business_id`
+- [x] Verify the app DB role lacks `BYPASSRLS` — it did have it. Postgres makes
+      `POSTGRES_USER` a superuser, so every policy was silently ignored until
+      migration 0002 introduced the unprivileged `daybook_app` role.
 
 ### API
 - [ ] Fastify bootstrap, Zod type provider, OpenAPI generation
@@ -76,12 +79,14 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
 - [ ] Typed API client on `@daybook/contracts`
 
 ### Tests
-- [ ] **Cross-tenant 404 test** on every collection endpoint (the one that matters)
+- [ ] **Cross-tenant 404 test** on every collection endpoint (the one that
+      matters) — database layer done (14 tests); the per-endpoint sweep waits
+      on the endpoints existing
 - [ ] Privilege-escalation tests for all four roles
 - [ ] OTP rate limit and expiry tests
 - [ ] Refresh reuse-detection test
 - [ ] Idempotency replay test
-- [ ] Audit-written-in-transaction test
+- [x] Audit-written-in-transaction test (6 tests, incl. UPDATE/DELETE refusal)
 
 ## Exit criteria
 

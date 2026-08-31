@@ -1,11 +1,11 @@
 # Status
 
 **Updated:** 2026-08-31
-**Current phase:** 1 — Foundation. Design tasks and the whole Workspace block
-are done; Database is next.
-**Next task:** `packages/api` does not exist yet. Start the Database block —
-Drizzle setup, the auth and tenancy tables, and `withTenant()` — against real
-Postgres via `pnpm db:up`.
+**Current phase:** 1 — Foundation. Design, Workspace and Database blocks
+done (15/51). API is next.
+**Next task:** Fastify bootstrap — env validation at boot, the structured
+error envelope, pino with OTP/token redaction, and `/health`. Then the OTP
+endpoints.
 
 ## Shipped
 
@@ -38,11 +38,38 @@ load against TypeScript 7 (`does not support TS 7.0`), in its latest release and
 its canary alike. The choice was TypeScript 6 or a different linter; oxlint won
 because it never loads the TypeScript API, so the coupling cannot break again.
 
+**Database block complete.** 12 tables per `docs/ERD.md`, three migrations, a
+seed script for the permission catalogue, and `withTenant()`.
+
+**Two real bugs found by writing the tests rather than by reading the code:**
+
+1. **The app was connecting as a superuser**, so every RLS policy was present
+   and silently ignored. Postgres makes `POSTGRES_USER` a superuser and a
+   superuser bypasses RLS whether or not it is FORCEd. Migration 0002 adds the
+   unprivileged `daybook_app` role the API now uses. This is exactly the failure
+   `docs/ERD.md` called "silently catastrophic", and it is why that line said to
+   make it a test rather than a habit.
+2. **`current_setting` returns an empty string, not NULL**, on a pooled
+   connection whose earlier transaction set the tenant. `''::uuid` raises 22P02,
+   so the policies would have thrown intermittent 500s under load. All policies
+   now route through a `current_business_id()` function that collapses both
+   cases to NULL.
+
+**Audit is append-only twice over** — the grant is withheld *and* a trigger
+refuses UPDATE/DELETE. The grant alone is not enough, because the migration role
+owns the table and an owner bypasses its own grants.
+
+**Postgres 18 mount fix** — `compose.yaml` mounted `/var/lib/postgresql/data`,
+which makes the postgres:18 container exit on start. It wants a single mount at
+`/var/lib/postgresql`. `pnpm db:up` now brings all three services up healthy.
+
 ## Tested
 
-`pnpm typecheck`, `pnpm lint`, `pnpm test` (76 tests), `pnpm check:vertical-leak`
-and `pnpm check:client-safe` all green locally on Node 24.20.0. `pnpm peers check`
-reports no issues — the tree has no unmet peer dependency.
+`pnpm typecheck`, `pnpm lint` and `pnpm test` green across three packages —
+**96 tests**: 34 contracts, 42 core, 20 API against real Postgres 18.6. The API
+suite includes 14 cross-tenant isolation tests and 6 audit-immutability tests,
+all connecting as the unprivileged role. `pnpm check:vertical-leak` and
+`pnpm check:client-safe` green; no unmet peer dependency.
 
 Not yet tested: anything touching a database, an HTTP handler or a device. None
 of it exists.
