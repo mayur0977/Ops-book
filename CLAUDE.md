@@ -22,6 +22,7 @@ machinery, tasks and photographic evidence — offline-first, multi-tenant.
 | Mobile design — behaviour | `docs/design/apple-hig.md` |
 | Mobile design — motion | `docs/design/motion.md` |
 | Offline sync contract | `docs/sync-contract.md` |
+| Branching and releases | `docs/git-workflow.md` |
 | Running on a real device (free) | `docs/device-testing.md` |
 | OTP / SMS in India | `docs/otp-sms.md` |
 | What it costs, and when | `docs/costs.md` |
@@ -118,7 +119,9 @@ pnpm check:vertical-leak
 
 - **Commits:** `type(scope): summary` — e.g. `feat(labour): muster roll batch upsert`.
   Scopes: `api`, `mobile`, `contracts`, `core`, `verticals`, `ci`, `docs`.
-- **Branches:** `phase-NN/short-description`.
+- **Branches:** git-flow. `main` (production) ← `develop` (integration) ←
+  `feature/phase-NN-name`. One feature branch per phase. **Never commit directly
+  to `main` or `develop`.** See `docs/git-workflow.md`.
 - **Migrations** are reviewed as their own commit, and are reversible or ship
   with a written backout plan.
 - **Tags:** `api-v*` and `app-v*`. The two deployables do not release in lockstep.

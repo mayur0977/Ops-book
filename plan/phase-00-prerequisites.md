@@ -46,8 +46,10 @@ Auth is built entirely against `SMS_PROVIDER=console`, which prints the OTP to
 the server log. See `docs/otp-sms.md` and ADR 0007.
 
 ### Local toolchain
-- [ ] Node 24.20.0 (`nvm install 24.20.0 && nvm use`) — currently 20.10.0
-- [ ] `corepack enable && corepack prepare pnpm@11.24.0 --activate`
+- [x] Node 24.20.0 — installed via `brew install node@24`. Note an older
+      v20.10.0 still sits at `/usr/local/bin/node`, shadowed because
+      `/opt/homebrew/bin` precedes it on PATH.
+- [x] pnpm 11.24.0 via `corepack prepare pnpm@11.24.0 --activate`
 - [ ] Docker Desktop running; `pnpm db:up` brings up Postgres, Redis, MinIO
 
 ### Repository
@@ -69,7 +71,7 @@ the server log. See `docs/otp-sms.md` and ADR 0007.
 - [x] Product name decided and applied throughout the repo
 - [x] Device-testing and OTP strategies decided (no paid accounts required)
 - [ ] DLT registration submitted (approval may still be pending)
-- [ ] `node -v` reports 24.20.0
+- [x] `node -v` reports 24.20.0 and `pnpm -v` reports 11.24.0
 - [ ] `pnpm db:up` brings up all three services healthy
 - [ ] Expo Go runs a hello-world on your Android phone
 - [ ] One CI run is green on a clean checkout
@@ -81,9 +83,11 @@ Phase 11.
 
 Only three things, and none of them cost money:
 
-1. **Node 24.20.0** — `nvm install 24.20.0 && nvm use`. Five minutes.
-2. **Free Expo account** — `eas login`. No card required.
+1. ~~Node 24.20.0~~ — done, via Homebrew.
+2. **Free Expo account** — `eas login`. No card required. Needed at Phase 3,
+   not yet.
 3. **Repo visibility + branch protection** — two minutes in GitHub settings.
+   Protect `main` and `develop` now that git-flow is in use.
 
 Worth starting because it is slow, but not blocking:
 
