@@ -13,9 +13,13 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
 ## Tasks
 
 ### Design first — before any feature code
-- [ ] Finalise `docs/ERD.md` for the Phase 1–4 tables
-- [ ] Finalise `docs/permissions.md` — the full key list
-- [ ] Confirm the sync contract in `docs/sync-contract.md`
+- [x] Finalise `docs/ERD.md` for the Phase 1–4 tables — conventions, auth tables
+      with refresh reuse detection, tenancy, append-only audit, idempotency,
+      and the RLS policy shape (`USING` **and** `WITH CHECK`)
+- [x] Finalise `docs/permissions.md` — full key catalogue, tri-state member
+      overrides, default grants per role, and six enforced invariants
+- [x] Confirm the sync contract in `docs/sync-contract.md` — reviewed, unchanged;
+      `Idempotency-Key` + `client_uuid` land in this phase as designed
 
 ### Workspace
 - [ ] `packages/config` — tsconfig, eslint (incl. restricted-imports rule), prettier

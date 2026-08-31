@@ -20,7 +20,17 @@ git diff            # and the staged diff if anything is already staged
 
 Read what actually changed. Do not commit a diff you have not looked at.
 
-## 2. Safety gates — all must pass before staging
+## 2. Check the branch first
+
+```bash
+git branch --show-current
+```
+
+Work belongs on a `feature/phase-NN-*` branch. If HEAD is `main` or `develop`,
+**stop before staging anything** and say so — offer to move the changes onto a
+feature branch instead. See `docs/git-workflow.md`.
+
+## 3. Safety gates — all must pass before staging
 
 - **Secrets.** Scan the diff for private keys, `AKIA…`, `ghp_…`, `xox…`,
   certificates, and any real `.env` file. If anything matches, **stop**, report
@@ -34,7 +44,7 @@ Read what actually changed. Do not commit a diff you have not looked at.
 
 If a gate fails, fix it or stop. Never commit around a failing gate.
 
-## 3. Decide the shape of the commit
+## 4. Decide the shape of the commit
 
 Group the changes by intent. **If they span unrelated concerns, propose
 splitting into two or more commits** and say why — one commit per idea is worth
@@ -43,7 +53,7 @@ more than one commit per session.
 Do not split mechanically by folder. A schema change, its API handler, its test
 and its screen are *one* vertical slice and belong in *one* commit.
 
-## 4. Write the message
+## 5. Write the message
 
 Repo convention — `type(scope): summary`
 
@@ -60,7 +70,7 @@ Rules for the body:
 - End with:
   `Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>`
 
-## 5. Commit
+## 6. Commit
 
 ```bash
 git add -A                     # or specific paths if splitting
@@ -72,7 +82,7 @@ MSG
 Never `git commit -m` for a multi-line message; never `-i`; never `--amend` a
 commit that has been pushed.
 
-## 6. Push, only if asked
+## 7. Push, only if asked
 
 If `$ARGUMENTS` contains `push`: `git push origin <current-branch>`, then
 confirm the remote head matches local.
@@ -80,13 +90,13 @@ confirm the remote head matches local.
 If a push is rejected, **stop and report** — do not force, do not rebase
 unasked.
 
-## 7. Update the plan
+## 8. Update the plan
 
 If this work completed a task in the current `plan/phase-NN-*.md`, tick it. If
 it ended a working session, refresh `plan/STATUS.md`. These belong in the same
 commit as the work they describe.
 
-## 8. Report
+## 9. Report
 
 Point-wise, per `CLAUDE.md`:
 
