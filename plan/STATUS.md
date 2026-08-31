@@ -55,15 +55,27 @@ of it exists.
 - Repo visibility unconfirmed; branch protection not set
 - DLT registration not submitted — weeks of waiting, blocks launch not work
 
-**New, small:**
-- `.claude/settings.json` still denies `Read(./.env.*)`, which catches the safe,
-  committed `.env.example`. Narrowing it needs a human — editing that file is
-  blocked from inside a session.
-- `.github/workflows/ci.yml` runs on `pull_request` and on pushes to `main`
-  only. Under git-flow the integration branch is `develop`, so pushes there
-  currently run no CI. One line to fix; not done unprompted.
+**Repository is PUBLIC** (changed 2026-08-31, was to be private per Phase 0).
+History was scanned: no key, token, private key or real `.env` has ever been
+committed, and `.env.example` holds only placeholders plus the `local_dev_only`
+credentials that match `compose.yaml`. The consequence to keep in mind is that
+any secret committed from here is public the instant it is pushed and must be
+treated as compromised, not merely removed.
+
+**Still open:**
+- **Branch protection on `main` is not enabled** — the one item from this round
+  that could not be done from a session. It needs the GitHub web UI or `gh`,
+  and `gh` is not installed on this machine. A public repo with an unprotected
+  default branch takes direct pushes from anyone with write access.
 - oxlint has no type-aware rules. Nothing enforced needs them today. Revisit
   ESLint when typescript-eslint supports TS 7 (their issue #10940).
+
+**Closed this round:**
+- CI now also runs on pushes to `develop`, not just `main`
+- `.claude/settings.json` deny list narrowed to real secret files, so the
+  committed `.env.example` is readable again
+- `.env.example` SMS block regrouped: provider, then its credentials, then the
+  denial-of-wallet guards
 
 **Outside this project, but a real hazard:**
 - `/Users/mayurpatel/.git` exists — the home directory is a git repository with
@@ -73,7 +85,8 @@ of it exists.
 ## Git
 
 - On `feature/phase-01-foundation`, branched from `develop`
-- Changes are staged in the working tree and **not committed** — awaiting review
+- `1857219` (Workspace block) is committed **and pushed** to origin
+- Later repo-hygiene changes are uncommitted in the working tree
 
 ## Next
 
