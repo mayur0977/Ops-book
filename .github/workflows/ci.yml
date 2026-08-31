@@ -3,7 +3,9 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    # develop is the git-flow integration branch, so it needs the same gate as
+    # main. Without it, a phase branch merged to develop runs no CI at all.
+    branches: [main, develop]
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -85,7 +87,6 @@ jobs:
   tenant-isolation:
     name: Tenant isolation
     runs-on: ubuntu-latest
-    if: ${{ hashFiles('apps/api/package.json') != '' }}
     services:
       postgres:
         image: postgres:18-alpine
@@ -104,15 +105,34 @@ jobs:
       SMS_PROVIDER: console
     steps:
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
+
+      # hashFiles() is only available at step level, never in a job-level `if`
+      # — using it there stops the whole workflow compiling. Guarding here also
+      # means the job always reports a status, which a required status check in
+      # a branch ruleset needs: a skipped job blocks a PR forever.
+      - id: detect
+        name: Does apps/api exist yet?
+        run: |
+          if [ -f apps/api/package.json ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "apps/api does not exist yet — nothing to isolate. Skipping."
+          fi
+
+      - if: steps.detect.outputs.ready == 'true'
+        uses: pnpm/action-setup@v4
         with:
           version: ${{ env.PNPM_VERSION }}
-      - uses: actions/setup-node@v5
+      - if: steps.detect.outputs.ready == 'true'
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @daybook/api test:tenant
+      - if: steps.detect.outputs.ready == 'true'
+        run: pnpm install --frozen-lockfile
+      - if: steps.detect.outputs.ready == 'true'
+        run: pnpm --filter @daybook/api test:tenant
 
   security:
     name: Dependency audit

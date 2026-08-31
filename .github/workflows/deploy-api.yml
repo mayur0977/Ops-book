@@ -43,16 +43,16 @@ jobs:
       - name: Deploy
         env:
           DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
-        run: echo "TODO(phase-01): platform deploy command"
+        run: echo 'TODO(phase-01) platform deploy command'
 
       - name: Verify health
-        run: echo "TODO(phase-01): curl /health and fail the job on non-200"
+        run: echo 'TODO(phase-01) curl /health and fail the job on non-200'
 
       - name: Publish OpenAPI (documentation only)
-        run: echo "TODO(phase-01): upload generated openapi.json"
+        run: echo 'TODO(phase-01) upload generated openapi.json'
 
       - name: Sentry release
         if: startsWith(github.ref, 'refs/tags/api-v')
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-        run: echo "TODO(phase-01): create Sentry release"
+        run: echo 'TODO(phase-01) create Sentry release'
