@@ -14,7 +14,12 @@ import { AppError, toEnvelope } from './lib/errors.js';
 import { loggerOptions } from './lib/logging.js';
 import { routePermissions } from './plugins/route-permissions.js';
 import { healthRoutes } from './routes/health.js';
+import { authRoutes } from './routes/auth.js';
+import { createSmsDriver } from './platform/sms/index.js';
+import { createDatabase, createPool } from './db/client.js';
 import type { Env } from './env.js';
+import type { Database } from './db/client.js';
+import type { SmsDriver } from './platform/sms/index.js';
 
 export type App = FastifyInstance<
   Server,
@@ -24,7 +29,13 @@ export type App = FastifyInstance<
   ZodTypeProvider
 >;
 
-export async function buildApp(env: Env): Promise<App> {
+export interface BuildOptions {
+  /** Supplied by tests so the suite reuses one pool instead of opening many. */
+  db?: Database;
+  sms?: SmsDriver;
+}
+
+export async function buildApp(env: Env, options: BuildOptions = {}): Promise<App> {
   const app = Fastify({
     logger: loggerOptions(env),
     // Trusting the proxy is required for the OTP rate limits to see the real
@@ -99,6 +110,15 @@ export async function buildApp(env: Env): Promise<App> {
   });
 
   await app.register(healthRoutes);
+
+  // The pool is created here when one is not supplied so that the server owns
+  // its lifetime and closes it on shutdown, rather than leaking on restart.
+  const ownsPool = options.db === undefined;
+  const pool = ownsPool ? createPool(env.DATABASE_URL) : undefined;
+  const db = options.db ?? createDatabase(pool!);
+  if (pool) app.addHook('onClose', async () => pool.end());
+
+  await app.register(authRoutes({ db, env, sms: options.sms ?? createSmsDriver(env) }));
 
   return app;
 }

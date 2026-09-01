@@ -48,9 +48,11 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
 - [x] Env validation at boot (fail fast on a missing secret)
 - [x] Structured error envelope; pino with OTP/token redaction (12 tests
       against real pino output, not against the config)
-- [ ] `platform/sms` abstraction + `console` driver
-- [ ] `POST /auth/otp/request`, `/auth/otp/verify` with rate limits
-- [ ] Refresh rotation **with reuse detection**
+- [x] `platform/sms` abstraction + `console` driver
+- [x] `POST /auth/otp/request`, `/auth/otp/verify` with rate limits — resend
+      cooldown, per-number/day, per-IP/hour and a global denial-of-wallet ceiling
+- [x] Refresh rotation **with reuse detection** — replay revokes the whole
+      family and its session
 - [ ] Businesses: create (with vertical), join by code, switch, regenerate code
 - [ ] Members, roles, permission overrides
 - [ ] `preHandler`: resolve business, verify membership, load permissions
@@ -86,8 +88,8 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
       matters) — database layer done (14 tests); the per-endpoint sweep waits
       on the endpoints existing
 - [ ] Privilege-escalation tests for all four roles
-- [ ] OTP rate limit and expiry tests
-- [ ] Refresh reuse-detection test
+- [x] OTP rate limit and expiry tests
+- [x] Refresh reuse-detection test
 - [ ] Idempotency replay test
 - [x] Audit-written-in-transaction test (6 tests, incl. UPDATE/DELETE refusal)
 

@@ -24,6 +24,22 @@ const envSchema = z.object({
     .min(32, 'JWT_REFRESH_SECRET must be at least 32 characters'),
 
   SMS_PROVIDER: z.enum(['console', 'msg91', 'gupshup', 'firebase']).default('console'),
+
+  ACCESS_TOKEN_TTL_SECONDS: z.coerce.number().int().positive().default(900), // 15m
+  REFRESH_TOKEN_TTL_SECONDS: z.coerce.number().int().positive().default(2_592_000), // 30d
+
+  OTP_TTL_SECONDS: z.coerce.number().int().positive().default(300),
+  OTP_MAX_ATTEMPTS: z.coerce.number().int().positive().default(5),
+
+  /**
+   * Denial-of-wallet guards. An unprotected OTP endpoint bills you for every
+   * request someone scripts, so these are required before any live provider is
+   * enabled — not tuning knobs to add later.
+   */
+  OTP_RESEND_COOLDOWN_SECONDS: z.coerce.number().int().positive().default(60),
+  OTP_MAX_PER_NUMBER_PER_DAY: z.coerce.number().int().positive().default(10),
+  OTP_MAX_PER_IP_PER_HOUR: z.coerce.number().int().positive().default(20),
+  OTP_GLOBAL_DAILY_CEILING: z.coerce.number().int().positive().default(2000),
 });
 
 export type Env = z.infer<typeof envSchema>;

@@ -1,11 +1,11 @@
 # Status
 
 **Updated:** 2026-08-31
-**Current phase:** 1 — Foundation. Design, Workspace, Database and the API
-bootstrap are done (20/51). Auth is next.
-**Next task:** The `platform/sms` abstraction with its console driver, then
-`POST /auth/otp/request` and `/auth/otp/verify` with rate limits, then refresh
-rotation with reuse detection.
+**Current phase:** 1 — Foundation. Design, Workspace, Database, API bootstrap
+and auth are done (25/51). Businesses and membership are next.
+**Next task:** Business create/join/switch, members and roles, then the
+`preHandler` that resolves the business, verifies membership and loads
+permissions — followed by the idempotency middleware and the audit writer.
 
 ## Shipped
 
@@ -37,6 +37,26 @@ a deliberate violation, not assumed.
 load against TypeScript 7 (`does not support TS 7.0`), in its latest release and
 its canary alike. The choice was TypeScript 6 or a different linter; oxlint won
 because it never loads the TypeScript API, so the coupling cannot break again.
+
+**Auth works end to end**, verified against a running server rather than only
+through `app.inject`: request a code, read it from the console driver, verify,
+rotate, and see a replay refused. Phone is the identity; there is no password.
+
+**Refresh reuse detection revokes the whole family**, and a test asserts the
+rows rather than the status code — which caught a serious bug. The revocation
+had been running inside the transaction that then threw, so the rollback undid
+it: callers saw a correct 401 while every token in the family stayed live. It
+looked handled and was not. Revocation now commits in its own transaction.
+
+**The OTP endpoints cannot enumerate users.** A registered and an unregistered
+number get identical responses, and wrong, expired and never-requested codes
+all return one error. Codes are argon2id hashes, never stored or logged in the
+clear — the only place a code appears is the dev console driver, which
+`loadEnv` refuses when NODE_ENV=production.
+
+**Denial-of-wallet guards are in place before any live provider**: resend
+cooldown, per-number per day, per-IP per hour, and a global daily ceiling whose
+rejection message deliberately does not reveal that a ceiling exists.
 
 **API bootstrap done.** Fastify 5 with the Zod type provider, so the schemas the
 mobile app imports are the ones the server enforces. Env validated at boot —
@@ -84,7 +104,7 @@ which makes the postgres:18 container exit on start. It wants a single mount at
 ## Tested
 
 `pnpm typecheck`, `pnpm lint` and `pnpm test` green across three packages —
-**119 tests**: 34 contracts, 42 core, 43 API against real Postgres 18.6. The API
+**138 tests**: 34 contracts, 42 core, 62 API against real Postgres 18.6. The API
 suite includes 14 cross-tenant isolation tests and 6 audit-immutability tests,
 all connecting as the unprivileged role. `pnpm check:vertical-leak` and
 `pnpm check:client-safe` green; no unmet peer dependency.
