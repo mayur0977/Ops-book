@@ -6,6 +6,7 @@ import {
   hashRefreshToken,
   signAccessToken,
 } from '../../lib/tokens.js';
+import { writeAudit } from '../../lib/audit.js';
 import * as schema from '../../db/schema/index.js';
 import type { Database } from '../../db/client.js';
 import type { Env } from '../../env.js';
@@ -248,6 +249,19 @@ export async function verifyOtp(
 
     const issued = await issueRefreshToken(tx, env, session!.id, null, now);
     const access = await signAccessToken(env, { sub: user.id, sid: session!.id }, now);
+
+    // A global event: business_id is null because there is no business context
+    // at login. Written in the same transaction as the session it describes,
+    // so a session cannot exist without its audit row.
+    await writeAudit(tx, {
+      businessId: null,
+      actorId: user.id,
+      action: existing ? 'auth.login' : 'auth.user_created',
+      entityType: 'user',
+      entityId: user.id,
+      // Never the code, the hash, or the tokens — see auditable().
+      after: { sessionId: session!.id, platform: input.device?.platform ?? null },
+    });
 
     return {
       userId: user.id,

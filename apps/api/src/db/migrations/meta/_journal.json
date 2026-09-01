@@ -36,6 +36,13 @@
       "when": 1788195201084,
       "tag": "0004_join_by_code_lookup",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788195202084,
+      "tag": "0005_global_audit_reads",
+      "breakpoints": true
     }
   ]
 }

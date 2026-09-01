@@ -377,6 +377,55 @@ describe('joining by code', () => {
   });
 });
 
+describe('belonging to two businesses', () => {
+  it('lists both and answers per business, keyed only by the header', async () => {
+    // Switching is a client concern: the app sends a different X-Business-Id.
+    // The same token must therefore resolve to different context per business.
+    const user = await signUp();
+    const mine = await newBusiness(user, 'My Own Works');
+
+    const other = await signUp();
+    const theirs = await newBusiness(other, 'Someone Elses Works');
+    const { joinCode } = await app
+      .inject({
+        method: 'GET',
+        url: '/businesses/join-code',
+        headers: auth(other, theirs),
+      })
+      .then((r) => r.json());
+    await app.inject({
+      method: 'POST',
+      url: '/businesses/join',
+      headers: auth(user),
+      payload: { joinCode },
+    });
+
+    const list = await app
+      .inject({ method: 'GET', url: '/businesses', headers: auth(user) })
+      .then((r) => r.json());
+    expect(list.memberships).toHaveLength(2);
+    expect(
+      list.memberships.map((m: { roleKey: string }) => m.roleKey).toSorted(),
+    ).toEqual(['owner', 'staff']);
+
+    // Owner in one: allowed.
+    const asOwner = await app.inject({
+      method: 'GET',
+      url: '/businesses/join-code',
+      headers: auth(user, mine),
+    });
+    expect(asOwner.statusCode).toBe(200);
+
+    // Staff in the other, same token: refused.
+    const asStaff = await app.inject({
+      method: 'GET',
+      url: '/businesses/join-code',
+      headers: auth(user, theirs),
+    });
+    expect(asStaff.statusCode).toBe(403);
+  });
+});
+
 describe('permission enforcement', () => {
   async function businessWithStaff() {
     const owner = await signUp();

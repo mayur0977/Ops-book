@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm';
 import { buildApp } from '../../app.js';
 import { loadEnv } from '../../env.js';
 import { db, pool, schema } from '../../../test/helpers.js';
+import { withUser } from '../../db/client.js';
 import { hashRefreshToken } from '../../lib/tokens.js';
 import type { App } from '../../app.js';
 import type { SmsDriver } from '../../platform/sms/index.js';
@@ -305,6 +306,51 @@ describe('verifying a code', () => {
 
     expect(unknown.statusCode).toBe(wrong.statusCode);
     expect(unknown.json().error.message).toBe(wrong.json().error.message);
+  });
+});
+
+describe('audit', () => {
+  it('records user creation and login as global events', async () => {
+    // business_id is null: there is no business context at login, and the ERD
+    // reserves that for exactly these events.
+    const phone = nextPhone();
+    await requestCode(app, phone);
+    const created = await verifyCode(app, phone, lastCode());
+    const userId = created.json().userId;
+
+    await new Promise((r) => setTimeout(r, 1100));
+    await requestCode(app, phone);
+    await verifyCode(app, phone, lastCode());
+
+    // Global rows are visible only to the actor they concern, so the read
+    // identifies that user rather than running with no context at all.
+    const rows = await withUser(db, userId, (tx) =>
+      tx.select().from(schema.auditLogs).where(eq(schema.auditLogs.actorId, userId)),
+    );
+
+    expect(rows.map((r) => r.action).toSorted()).toEqual([
+      'auth.login',
+      'auth.user_created',
+    ]);
+    for (const row of rows) expect(row.businessId).toBeNull();
+  });
+
+  it('never records the code or the tokens', async () => {
+    const phone = nextPhone();
+    await requestCode(app, phone);
+    const code = lastCode();
+    const session = await verifyCode(app, phone, code).then((r) => r.json());
+
+    const rows = await withUser(db, session.userId, (tx) =>
+      tx
+        .select()
+        .from(schema.auditLogs)
+        .where(eq(schema.auditLogs.actorId, session.userId)),
+    );
+    const serialised = JSON.stringify(rows);
+    expect(serialised).not.toContain(code);
+    expect(serialised).not.toContain(session.refreshToken);
+    expect(serialised).not.toContain(session.accessToken);
   });
 });
 

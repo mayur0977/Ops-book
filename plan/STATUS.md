@@ -1,11 +1,12 @@
 # Status
 
 **Updated:** 2026-08-31
-**Current phase:** 1 — Foundation. Design, Workspace, Database, API bootstrap,
-auth and tenancy over HTTP are done (28/51). Members and roles are next.
-**Next task:** Member management — list, role change, permission overrides —
-which also completes the privilege-escalation tests for partner and manager.
-Then the mobile app.
+**Current phase:** 1 — Foundation. The whole server side is done (35/51).
+Everything left is the mobile app, plus wiring idempotency to its first
+mutating route.
+**Next task:** The Expo scaffold and the "Ledger" design tokens, then prove a
+`@daybook/contracts` import resolves on a physical device before writing any
+screens — Metro + pnpm is the classic trap.
 
 ## Shipped
 
@@ -37,6 +38,25 @@ a deliberate violation, not assumed.
 load against TypeScript 7 (`does not support TS 7.0`), in its latest release and
 its canary alike. The choice was TypeScript 6 or a different linter; oxlint won
 because it never loads the TypeScript API, so the coupling cannot break again.
+
+**Members and roles are done, with all six invariants from
+`docs/permissions.md` enforced over HTTP** — not merely in `@daybook/core`,
+because an invariant that is not wired to a route protects nothing. The last
+owner cannot be demoted or revoked; a member cannot grant a capability they do
+not hold; `members.role.change` is refused for a non-owner even when explicitly
+granted, since it is the key that could manufacture every other permission;
+every change is audited with before and after; and revocation takes effect on
+the member's very next request rather than when their token expires, because
+membership is re-read per request.
+
+**Privilege escalation is swept across all four roles.**
+
+**Global audit rows were write-only, and are not any more.** Login and user
+creation carry a NULL business_id per the ERD, but 0001's policy read
+`business_id = current_business_id()` — and NULL = NULL is NULL, not true. The
+rows were being written and could be read by nobody, ever. Migration 0005 makes
+a global row visible to the actor it concerns and to no one else. An audit
+trail nobody can read is not an audit trail.
 
 **Tenancy works over HTTP.** Create a business (seeded with all four system
 roles and their grants), join by code, list your memberships, rotate the code.
@@ -125,7 +145,7 @@ which makes the postgres:18 container exit on start. It wants a single mount at
 ## Tested
 
 `pnpm typecheck`, `pnpm lint` and `pnpm test` green across three packages —
-**158 tests**: 34 contracts, 42 core, 82 API against real Postgres 18.6. The API
+**183 tests**: 34 contracts, 42 core, 107 API against real Postgres 18.6. The API
 suite includes 14 cross-tenant isolation tests and 6 audit-immutability tests,
 all connecting as the unprivileged role. `pnpm check:vertical-leak` and
 `pnpm check:client-safe` green; no unmet peer dependency.

@@ -54,7 +54,8 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
 - [x] Refresh rotation **with reuse detection** — replay revokes the whole
       family and its session
 - [x] Businesses: create (with vertical), join by code, switch, regenerate code
-- [ ] Members, roles, permission overrides
+- [x] Members, roles, permission overrides — all six invariants from
+      `docs/permissions.md` enforced and tested over HTTP
 - [x] `preHandler`: resolve business, verify membership, load permissions —
       a non-member gets 404, never 403
 - [x] Startup assertion: **every route declares a permission** — the server
@@ -88,11 +89,9 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
 - [ ] Typed API client on `@daybook/contracts`
 
 ### Tests
-- [ ] **Cross-tenant 404 test** on every collection endpoint (the one that
-      matters) — database layer done (14 tests); the per-endpoint sweep waits
-      on the endpoints existing
-- [ ] Privilege-escalation tests for all four roles — owner and staff covered
-      over HTTP; partner and manager land with the member-management routes
+- [x] **Cross-tenant 404 test** on every collection endpoint that exists —
+      businesses and members. Later phases add their own with their endpoints
+- [x] Privilege-escalation tests for all four roles
 - [x] OTP rate limit and expiry tests
 - [x] Refresh reuse-detection test
 - [ ] Idempotency replay test
@@ -100,14 +99,14 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
 
 ## Exit criteria
 
-- [ ] Two businesses exist; a member of A gets **404** for a known ID in B —
-      as an automated test, on every collection endpoint
-- [ ] Every route declares a permission (startup assertion green)
+- [x] Two businesses exist; a member of A gets **404** for a known ID in B —
+      as an automated test, on every collection endpoint that exists
+- [x] Every route declares a permission (startup assertion green)
 - [ ] Login works on a real iOS and a real Android device
-- [ ] A user belongs to two businesses and can switch between them
+- [x] A user belongs to two businesses and can switch between them
 - [ ] A repeated request with the same `Idempotency-Key` returns the original
       response and creates nothing new
-- [ ] Audit rows appear for auth, membership and permission changes
+- [x] Audit rows appear for auth, membership and permission changes
 - [ ] `pnpm typecheck && pnpm test && pnpm check:vertical-leak` green in CI
 
 ## Out of scope
