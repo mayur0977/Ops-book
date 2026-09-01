@@ -1,11 +1,11 @@
 # Status
 
 **Updated:** 2026-08-31
-**Current phase:** 1 — Foundation. Design, Workspace and Database blocks
-done (15/51). API is next.
-**Next task:** Fastify bootstrap — env validation at boot, the structured
-error envelope, pino with OTP/token redaction, and `/health`. Then the OTP
-endpoints.
+**Current phase:** 1 — Foundation. Design, Workspace, Database and the API
+bootstrap are done (20/51). Auth is next.
+**Next task:** The `platform/sms` abstraction with its console driver, then
+`POST /auth/otp/request` and `/auth/otp/verify` with rate limits, then refresh
+rotation with reuse detection.
 
 ## Shipped
 
@@ -38,6 +38,24 @@ load against TypeScript 7 (`does not support TS 7.0`), in its latest release and
 its canary alike. The choice was TypeScript 6 or a different linter; oxlint won
 because it never loads the TypeScript API, so the coupling cannot break again.
 
+**API bootstrap done.** Fastify 5 with the Zod type provider, so the schemas the
+mobile app imports are the ones the server enforces. Env validated at boot —
+a missing secret is a startup failure, not a 500 found by the first user to log
+in. Structured error envelope on every path, including 404 and unhandled
+throws, which never leak an internal message. `/health` deliberately does not
+touch Postgres: restarting a working process because a dependency blipped turns
+a short outage into a longer one.
+
+**Every route declares a permission, enforced at boot.** A route registered
+without `config: { access: … }` fails an `onReady` assertion and the server
+refuses to start. Neither allow-by-default nor deny-by-default exists — the
+first is a security bug, the second is a bug a user finds in production.
+
+**Log redaction is tested against real pino output**, not against the config: a
+redaction path that matches nothing looks exactly like one that works. OTP
+codes, token hashes and the authorization header are scrubbed, while the
+surrounding context survives so the line stays useful.
+
 **Database block complete.** 12 tables per `docs/ERD.md`, three migrations, a
 seed script for the permission catalogue, and `withTenant()`.
 
@@ -66,7 +84,7 @@ which makes the postgres:18 container exit on start. It wants a single mount at
 ## Tested
 
 `pnpm typecheck`, `pnpm lint` and `pnpm test` green across three packages —
-**96 tests**: 34 contracts, 42 core, 20 API against real Postgres 18.6. The API
+**119 tests**: 34 contracts, 42 core, 43 API against real Postgres 18.6. The API
 suite includes 14 cross-tenant isolation tests and 6 audit-immutability tests,
 all connecting as the unprivileged role. `pnpm check:vertical-leak` and
 `pnpm check:client-safe` green; no unmet peer dependency.

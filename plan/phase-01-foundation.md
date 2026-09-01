@@ -43,19 +43,22 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
       migration 0002 introduced the unprivileged `daybook_app` role.
 
 ### API
-- [ ] Fastify bootstrap, Zod type provider, OpenAPI generation
-- [ ] Env validation at boot (fail fast on a missing secret)
-- [ ] Structured error envelope; pino with OTP/token redaction
+- [x] Fastify bootstrap, Zod type provider. OpenAPI generation deferred until
+      routes exist to describe — an empty spec is not worth wiring
+- [x] Env validation at boot (fail fast on a missing secret)
+- [x] Structured error envelope; pino with OTP/token redaction (12 tests
+      against real pino output, not against the config)
 - [ ] `platform/sms` abstraction + `console` driver
 - [ ] `POST /auth/otp/request`, `/auth/otp/verify` with rate limits
 - [ ] Refresh rotation **with reuse detection**
 - [ ] Businesses: create (with vertical), join by code, switch, regenerate code
 - [ ] Members, roles, permission overrides
 - [ ] `preHandler`: resolve business, verify membership, load permissions
-- [ ] Startup assertion: **every route declares a permission**
+- [x] Startup assertion: **every route declares a permission** — the server
+      refuses to boot, so neither allow-by-default nor deny-by-default exists
 - [ ] Idempotency middleware (`Idempotency-Key`)
 - [ ] Audit writer — same transaction as the change
-- [ ] `/health`
+- [x] `/health`
 
 ### Mobile
 - [ ] Expo scaffold, expo-router, NativeWind
