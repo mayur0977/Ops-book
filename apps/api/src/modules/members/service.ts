@@ -4,6 +4,7 @@ import type { MemberAuthorization } from '@daybook/core';
 import type { PermissionKey, RoleKey } from '@daybook/contracts';
 import { AppError, conflict, forbidden, notFound } from '../../lib/errors.js';
 import { writeAudit } from '../../lib/audit.js';
+import { runIdempotent } from '../../lib/idempotency.js';
 import { withTenant } from '../../db/client.js';
 import * as schema from '../../db/schema/index.js';
 import type { Database, TenantDatabase } from '../../db/client.js';
@@ -20,6 +21,8 @@ export interface MemberActor {
   permissions: MemberAuthorization;
   requestId?: string | undefined;
   ip?: string | undefined;
+  /** The `Idempotency-Key` header, when the client sent one. */
+  idempotencyKey?: string | undefined;
 }
 
 export async function listMembers(deps: MemberDeps, actor: MemberActor) {
@@ -91,52 +94,63 @@ export async function changeMemberRole(
   return withTenant(
     deps.db,
     actor.businessId,
-    async (tx) => {
-      const before = await loadMember(tx, actor.businessId, memberId);
-
-      const violation = checkOwnerRemains(
-        await membersForInvariant(tx, actor.businessId),
+    async (tx) =>
+      runIdempotent(
+        tx,
         {
-          memberId,
-          nextRoleKey,
+          businessId: actor.businessId,
+          userId: actor.userId,
+          key: actor.idempotencyKey,
+          endpoint: `PATCH /members/${memberId}/role`,
+          body: { roleKey: nextRoleKey },
         },
-      );
-      if (violation === 'demote_last_owner') {
-        throw conflict('A business must always have at least one owner');
-      }
+        async () => {
+          const before = await loadMember(tx, actor.businessId, memberId);
 
-      const [role] = await tx
-        .select({ id: schema.roles.id })
-        .from(schema.roles)
-        .where(
-          and(
-            eq(schema.roles.businessId, actor.businessId),
-            eq(schema.roles.key, nextRoleKey),
-          ),
-        )
-        .limit(1);
-      if (!role) throw notFound('Role');
+          const violation = checkOwnerRemains(
+            await membersForInvariant(tx, actor.businessId),
+            {
+              memberId,
+              nextRoleKey,
+            },
+          );
+          if (violation === 'demote_last_owner') {
+            throw conflict('A business must always have at least one owner');
+          }
 
-      const [updated] = await tx
-        .update(schema.businessMembers)
-        .set({ roleId: role.id })
-        .where(eq(schema.businessMembers.id, memberId))
-        .returning();
+          const [role] = await tx
+            .select({ id: schema.roles.id })
+            .from(schema.roles)
+            .where(
+              and(
+                eq(schema.roles.businessId, actor.businessId),
+                eq(schema.roles.key, nextRoleKey),
+              ),
+            )
+            .limit(1);
+          if (!role) throw notFound('Role');
 
-      await writeAudit(tx, {
-        businessId: actor.businessId,
-        actorId: actor.userId,
-        action: 'member.role_change',
-        entityType: 'business_member',
-        entityId: memberId,
-        before: { roleKey: before.roleKey },
-        after: { roleKey: nextRoleKey },
-        requestId: actor.requestId ?? null,
-        ip: actor.ip ?? null,
-      });
+          const [updated] = await tx
+            .update(schema.businessMembers)
+            .set({ roleId: role.id })
+            .where(eq(schema.businessMembers.id, memberId))
+            .returning();
 
-      return { ...updated!, roleKey: nextRoleKey };
-    },
+          await writeAudit(tx, {
+            businessId: actor.businessId,
+            actorId: actor.userId,
+            action: 'member.role_change',
+            entityType: 'business_member',
+            entityId: memberId,
+            before: { roleKey: before.roleKey },
+            after: { roleKey: nextRoleKey },
+            requestId: actor.requestId ?? null,
+            ip: actor.ip ?? null,
+          });
+
+          return { ...updated!, roleKey: nextRoleKey };
+        },
+      ),
     actor.userId,
   );
 }
@@ -247,41 +261,52 @@ export async function revokeMember(
   return withTenant(
     deps.db,
     actor.businessId,
-    async (tx) => {
-      const before = await loadMember(tx, actor.businessId, memberId);
-
-      const violation = checkOwnerRemains(
-        await membersForInvariant(tx, actor.businessId),
+    async (tx) =>
+      runIdempotent(
+        tx,
         {
-          memberId,
-          nextStatus: 'revoked',
+          businessId: actor.businessId,
+          userId: actor.userId,
+          key: actor.idempotencyKey,
+          endpoint: `POST /members/${memberId}/revoke`,
+          body: {},
         },
-      );
-      if (violation === 'revoke_last_owner') {
-        throw conflict('A business must always have at least one owner');
-      }
+        async () => {
+          const before = await loadMember(tx, actor.businessId, memberId);
 
-      const [updated] = await tx
-        .update(schema.businessMembers)
-        .set({ status: 'revoked', revokedAt: now })
-        .where(eq(schema.businessMembers.id, memberId))
-        .returning();
-      if (!updated) throw notFound('Member');
+          const violation = checkOwnerRemains(
+            await membersForInvariant(tx, actor.businessId),
+            {
+              memberId,
+              nextStatus: 'revoked',
+            },
+          );
+          if (violation === 'revoke_last_owner') {
+            throw conflict('A business must always have at least one owner');
+          }
 
-      await writeAudit(tx, {
-        businessId: actor.businessId,
-        actorId: actor.userId,
-        action: 'member.revoke',
-        entityType: 'business_member',
-        entityId: memberId,
-        before: { status: before.status },
-        after: { status: 'revoked' },
-        requestId: actor.requestId ?? null,
-        ip: actor.ip ?? null,
-      });
+          const [updated] = await tx
+            .update(schema.businessMembers)
+            .set({ status: 'revoked', revokedAt: now })
+            .where(eq(schema.businessMembers.id, memberId))
+            .returning();
+          if (!updated) throw notFound('Member');
 
-      return updated;
-    },
+          await writeAudit(tx, {
+            businessId: actor.businessId,
+            actorId: actor.userId,
+            action: 'member.revoke',
+            entityType: 'business_member',
+            entityId: memberId,
+            before: { status: before.status },
+            after: { status: 'revoked' },
+            requestId: actor.requestId ?? null,
+            ip: actor.ip ?? null,
+          });
+
+          return updated;
+        },
+      ),
     actor.userId,
   );
 }

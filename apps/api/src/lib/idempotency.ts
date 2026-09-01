@@ -108,3 +108,50 @@ export async function completeIdempotencyKey(
       ),
     );
 }
+
+/**
+ * Claim, do the work, record the response — all inside the caller's
+ * transaction, so the key and the change commit or roll back together.
+ *
+ * That atomicity is the point. Claiming in a separate transaction leaves two
+ * failure modes: a key marked used by work that then failed (blocking the
+ * honest retry), or work that committed without its key (allowing a second
+ * execution). Neither is acceptable for a payment.
+ *
+ * Without a key the work simply runs — the header is optional, and a client
+ * that omits it gets today's behaviour rather than an error.
+ */
+export async function runIdempotent<T>(
+  tx: TenantDatabase,
+  input: {
+    businessId: string;
+    userId: string | null;
+    key: string | undefined;
+    endpoint: string;
+    body: unknown;
+  },
+  work: () => Promise<T>,
+): Promise<T> {
+  if (!input.key) return work();
+
+  const outcome = await claimIdempotencyKey(tx, {
+    businessId: input.businessId,
+    userId: input.userId,
+    key: input.key,
+    endpoint: input.endpoint,
+    body: input.body,
+  });
+
+  if (outcome.kind === 'replay') return outcome.body as T;
+
+  const result = await work();
+
+  await completeIdempotencyKey(tx, {
+    businessId: input.businessId,
+    key: input.key,
+    status: 200,
+    body: result,
+  });
+
+  return result;
+}

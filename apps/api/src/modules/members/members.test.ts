@@ -436,6 +436,136 @@ describe('privilege escalation across all four roles', () => {
   });
 });
 
+describe('idempotency', () => {
+  const withKey = (actor: Actor, businessId: string, key: string) => ({
+    ...auth(actor, businessId),
+    'idempotency-key': key,
+  });
+
+  it('replays the original response and creates nothing new', async () => {
+    const { owner, businessId, members } = await fixture(['staff', 'manager']);
+    const key = `test-${crypto.randomUUID()}`;
+    const url = `/members/${members.staff!.memberId}/role`;
+
+    const first = await app.inject({
+      method: 'PATCH',
+      url,
+      headers: withKey(owner, businessId, key),
+      payload: { roleKey: 'manager' },
+    });
+    expect(first.statusCode).toBe(200);
+
+    const audits = async () =>
+      withTenant(db, businessId, (tx) =>
+        tx
+          .select()
+          .from(schema.auditLogs)
+          .where(eq(schema.auditLogs.action, 'member.role_change')),
+      );
+    const afterFirst = await audits();
+
+    // The retry a flaky network produces: same key, same body.
+    const replay = await app.inject({
+      method: 'PATCH',
+      url,
+      headers: withKey(owner, businessId, key),
+      payload: { roleKey: 'manager' },
+    });
+
+    expect(replay.statusCode).toBe(200);
+    expect(replay.json()).toEqual(first.json());
+    // Nothing new: the work did not run a second time.
+    expect(await audits()).toHaveLength(afterFirst.length);
+  });
+
+  it('rejects the same key with a different body', async () => {
+    // Not a retry — a client bug. Replaying a response that does not describe
+    // what was asked for would be worse than refusing.
+    const { owner, businessId, members } = await fixture(['staff']);
+    const key = `test-${crypto.randomUUID()}`;
+    const url = `/members/${members.staff!.memberId}/role`;
+
+    await app.inject({
+      method: 'PATCH',
+      url,
+      headers: withKey(owner, businessId, key),
+      payload: { roleKey: 'manager' },
+    });
+
+    const conflicting = await app.inject({
+      method: 'PATCH',
+      url,
+      headers: withKey(owner, businessId, key),
+      payload: { roleKey: 'partner' },
+    });
+
+    expect(conflicting.statusCode).toBe(422);
+    expect(conflicting.json().error.code).toBe('idempotency_key_reused');
+  });
+
+  it('runs normally when no key is sent', async () => {
+    const { owner, businessId, members } = await fixture(['staff']);
+    const response = await app.inject({
+      method: 'PATCH',
+      url: `/members/${members.staff!.memberId}/role`,
+      headers: auth(owner, businessId),
+      payload: { roleKey: 'manager' },
+    });
+    expect(response.statusCode).toBe(200);
+  });
+
+  it('scopes keys per business, so two tenants cannot collide', async () => {
+    const a = await fixture(['staff']);
+    const b = await fixture(['staff']);
+    const key = 'shared-key-value';
+
+    const first = await app.inject({
+      method: 'PATCH',
+      url: `/members/${a.members.staff!.memberId}/role`,
+      headers: withKey(a.owner, a.businessId, key),
+      payload: { roleKey: 'manager' },
+    });
+    const second = await app.inject({
+      method: 'PATCH',
+      url: `/members/${b.members.staff!.memberId}/role`,
+      headers: withKey(b.owner, b.businessId, key),
+      payload: { roleKey: 'manager' },
+    });
+
+    expect(first.statusCode).toBe(200);
+    expect(second.statusCode).toBe(200);
+    expect(first.json().id).not.toBe(second.json().id);
+  });
+
+  it('replays a revoke without revoking twice', async () => {
+    const { owner, businessId, members } = await fixture(['staff']);
+    const key = `test-${crypto.randomUUID()}`;
+    const url = `/members/${members.staff!.memberId}/revoke`;
+
+    const first = await app.inject({
+      method: 'POST',
+      url,
+      headers: withKey(owner, businessId, key),
+    });
+    const replay = await app.inject({
+      method: 'POST',
+      url,
+      headers: withKey(owner, businessId, key),
+    });
+
+    expect(first.statusCode).toBe(200);
+    expect(replay.json()).toEqual(first.json());
+
+    const rows = await withTenant(db, businessId, (tx) =>
+      tx
+        .select()
+        .from(schema.auditLogs)
+        .where(eq(schema.auditLogs.action, 'member.revoke')),
+    );
+    expect(rows).toHaveLength(1);
+  });
+});
+
 describe('cross-tenant', () => {
   it('returns 404 for a member id belonging to another business', async () => {
     const a = await fixture(['staff']);

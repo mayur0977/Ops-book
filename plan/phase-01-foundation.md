@@ -60,9 +60,9 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
       a non-member gets 404, never 403
 - [x] Startup assertion: **every route declares a permission** — the server
       refuses to boot, so neither allow-by-default nor deny-by-default exists
-- [ ] Idempotency middleware (`Idempotency-Key`) — `lib/idempotency.ts` is
-      written and unit-ready; wiring it to a mutating route waits for Phase 3,
-      which is the first phase with one worth replaying
+- [x] Idempotency middleware (`Idempotency-Key`) — wired to the member
+      mutations. The claim and the work share one transaction, so a key can
+      never be spent by work that failed, nor work commit without its key
 - [x] Audit writer — same transaction as the change. Takes a `tx`, never a
       `db`, so calling it outside that transaction is not expressible
 - [x] `/health`
@@ -96,7 +96,8 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
 - [x] Privilege-escalation tests for all four roles
 - [x] OTP rate limit and expiry tests
 - [x] Refresh reuse-detection test
-- [ ] Idempotency replay test
+- [x] Idempotency replay test — replay, differing body, no key, per-business
+      key scoping, and a revoke that does not revoke twice
 - [x] Audit-written-in-transaction test (6 tests, incl. UPDATE/DELETE refusal)
 
 ## Exit criteria
@@ -106,7 +107,7 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
 - [x] Every route declares a permission (startup assertion green)
 - [ ] Login works on a real iOS and a real Android device
 - [x] A user belongs to two businesses and can switch between them
-- [ ] A repeated request with the same `Idempotency-Key` returns the original
+- [x] A repeated request with the same `Idempotency-Key` returns the original
       response and creates nothing new
 - [x] Audit rows appear for auth, membership and permission changes
 - [ ] `pnpm typecheck && pnpm test && pnpm check:vertical-leak` green in CI

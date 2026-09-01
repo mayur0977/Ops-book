@@ -1,9 +1,8 @@
 # Status
 
 **Updated:** 2026-08-31
-**Current phase:** 1 — Foundation, 45/51. Everything buildable is built. The
-six open items are the idempotency wiring and the checks that need a phone.
-Then run it on a real phone — that needs `eas login` and a device.
+**Current phase:** 1 — Foundation, 48/51. Everything that can be done from a
+keyboard is done. The three open items all need a phone or a CI run.
 
 ## Shipped
 
@@ -35,6 +34,15 @@ a deliberate violation, not assumed.
 load against TypeScript 7 (`does not support TS 7.0`), in its latest release and
 its canary alike. The choice was TypeScript 6 or a different linter; oxlint won
 because it never loads the TypeScript API, so the coupling cannot break again.
+
+**Idempotency is wired, not just written.** The member mutations accept
+`Idempotency-Key`, and the claim and the work share one transaction — so a key
+can never be spent by work that then failed (blocking the honest retry), nor can
+work commit without its key (allowing a second execution). Tested five ways:
+replay, a differing body (422, because that is a client bug and not a retry),
+no key at all, per-business key scoping, and a revoke that does not revoke
+twice. This lands in Phase 1 exactly as the plan asked, so Phase 9 is a sync
+engine rather than a rewrite.
 
 **The app is complete end to end for Phase 1**: OTP sign-in, business
 create/join/switch, and the five-tab shell. Tokens live in the Keychain /
@@ -188,7 +196,7 @@ which makes the postgres:18 container exit on start. It wants a single mount at
 ## Tested
 
 `pnpm typecheck`, `pnpm lint` and `pnpm test` green across three packages —
-**222 tests**: 34 contracts, 42 core, 107 API against real Postgres 18.6,
+**227 tests**: 34 contracts, 42 core, 112 API against real Postgres 18.6,
 39 mobile. The API
 suite includes 14 cross-tenant isolation tests and 6 audit-immutability tests,
 all connecting as the unprivileged role. `pnpm check:vertical-leak` and

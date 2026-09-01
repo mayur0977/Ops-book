@@ -34,6 +34,9 @@ const actorFrom = (request: FastifyRequest): MemberActor => ({
   permissions: request.business!.permissions,
   requestId: String(request.id),
   ip: request.ip,
+  // Optional by design: a client that omits it gets ordinary behaviour, and
+  // one that sends it gets its original response back on a retry.
+  idempotencyKey: request.headers['idempotency-key'] as string | undefined,
 });
 
 export function memberRoutes(deps: MemberDeps): FastifyPluginAsyncZod {
