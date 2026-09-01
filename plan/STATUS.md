@@ -1,9 +1,8 @@
 # Status
 
 **Updated:** 2026-08-31
-**Current phase:** 1 — Foundation, 40/51. Server side complete; the mobile
-foundation (tokens, primitives, motion, bundling) is in. Screens are next.
-**Next task:** The OTP login flow and the tab shell, on the typed API client.
+**Current phase:** 1 — Foundation, 45/51. Everything buildable is built. The
+six open items are the idempotency wiring and the checks that need a phone.
 Then run it on a real phone — that needs `eas login` and a device.
 
 ## Shipped
@@ -36,6 +35,27 @@ a deliberate violation, not assumed.
 load against TypeScript 7 (`does not support TS 7.0`), in its latest release and
 its canary alike. The choice was TypeScript 6 or a different linter; oxlint won
 because it never loads the TypeScript API, so the coupling cannot break again.
+
+**The app is complete end to end for Phase 1**: OTP sign-in, business
+create/join/switch, and the five-tab shell. Tokens live in the Keychain /
+Keystore via expo-secure-store — never AsyncStorage, which is an unencrypted
+file and would hand a session to anyone holding the phone. The non-sensitive
+active-business id does go to AsyncStorage.
+
+**The API client shares one in-flight refresh.** Without that, a screen firing
+four requests on mount would get four 401s and four parallel refreshes — and
+since rotation is single-use with reuse detection, three would present an
+already-used token and the server would correctly revoke the family. The user
+would be signed out for loading a screen. It also parses every response with
+the server's own Zod schema, so contract drift is a caught error rather than an
+undefined three screens later.
+
+**docs/design/motion.md and apps/mobile/CLAUDE.md were wrong about versions**
+and are now corrected. They named RN 0.87, Reanimated 4.6.0 and
+gesture-handler 3.2.1; SDK 57 pins RN 0.86.3, Reanimated 4.5.1 and 2.32.0, and
+the doc set is not installable — Reanimated 4.6 needs worklets 0.12.x while
+expo-modules-core caps at 0.10.x. Both files now say `expo install --check` is
+the authority.
 
 **The mobile foundation is in, and it bundles.** The "Ledger" tokens, all eight
 primitives, Reanimated with `useReducedMotion()` wired before the first animated

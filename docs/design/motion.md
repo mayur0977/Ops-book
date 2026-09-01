@@ -11,10 +11,17 @@ Motion is not decoration here. It is feedback.
 
 | Package | Version | Why |
 |---|---|---|
-| `react-native-reanimated` | 4.6.0 | Worklet-driven, runs on the UI thread. Non-negotiable — JS-thread animation stutters on the mid-range Android phones our users actually own. |
-| `react-native-gesture-handler` | 3.2.1 | Native gesture recognition; pairs with Reanimated. |
+| `react-native-reanimated` | 4.5.1 | Worklet-driven, runs on the UI thread. Non-negotiable — JS-thread animation stutters on the mid-range Android phones our users actually own. |
+| `react-native-gesture-handler` | 2.32.0 | Native gesture recognition; pairs with Reanimated. |
 | `expo-haptics` | 57.0.2 | Haptics are half of what makes a tap feel confirmed. |
-| `react-native-svg` | 15.15.5 | Path drawing (the checkmark, the rule sweep). |
+| `react-native-svg` | 15.15.4 | Path drawing (the checkmark, the rule sweep). |
+
+**These are Expo SDK 57's versions, and `expo install --check` is the authority
+on them — not this table.** An earlier draft named Reanimated 4.6.0 and
+gesture-handler 3.2.1, which cannot be installed here: Reanimated 4.6 requires
+`react-native-worklets` 0.12.x, and SDK 57's `expo-modules-core` accepts at most
+0.10.x. Corrected in Phase 1 when the app was first scaffolded. Re-run
+`expo install --check` after any SDK bump rather than trusting this table.
 
 **Not used:** Lottie. A JSON animation player is 500KB+ and invites decorative
 animation. If a moment genuinely needs Lottie, write an ADR justifying it first.

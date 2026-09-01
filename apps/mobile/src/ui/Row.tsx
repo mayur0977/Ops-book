@@ -13,7 +13,7 @@ export interface RowProps {
   /** `heading` type. The worker's name, the order's title. */
   title: string;
   /** `secondary` type in `ink-2`. Status and time, usually. */
-  subtitle?: string;
+  subtitle?: string | undefined;
   /**
    * The 3pt margin rail. This is the signature element of the system — a mark
    * in the ledger's margin — and it appears in every list in the app.
@@ -21,18 +21,18 @@ export interface RowProps {
    * Omitting it renders the rail transparent rather than collapsing it, so
    * rows with and without a status still align down the column.
    */
-  tone?: StatusTone;
+  tone?: StatusTone | undefined;
   /**
    * Colour is never the only signal: roughly one in twelve men has a colour
    * vision deficiency and this user base skews heavily male. A toned row
    * carries a letter or word too.
    */
-  marker?: string;
+  marker?: string | undefined;
   /** Right-hand column. Right-aligned, and tabular if it is a number. */
-  trailing?: ReactNode;
-  onPress?: () => void;
-  accessibilityLabel?: string;
-  twoLine?: boolean;
+  trailing?: ReactNode | undefined;
+  onPress?: () => void | undefined;
+  accessibilityLabel?: string | undefined;
+  twoLine?: boolean | undefined;
 }
 
 /**

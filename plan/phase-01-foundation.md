@@ -80,13 +80,15 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
       **Bundling is proven** for android and ios: both export, and the shared
       code is verifiably inside the bundle. The device run itself still needs
       a phone and `eas login`
-- [ ] Secure token storage via `expo-secure-store` (Keychain/Keystore)
+- [x] Secure token storage via `expo-secure-store` (Keychain/Keystore) —
+      tokens only; AsyncStorage holds the non-sensitive active business
 - [x] **Avoid `react-native-mmkv` until Phase 3** — honoured; AsyncStorage is
       the only key-value dependency
-- [ ] OTP login flow
-- [ ] Business create / join / switch
-- [ ] Tab shell: Home, Orders, Add, Labour, More
-- [ ] Typed API client on `@daybook/contracts`
+- [x] OTP login flow
+- [x] Business create / join / switch
+- [x] Tab shell: Home, Orders, Add, Labour, More — cross-fade, never a slide
+- [x] Typed API client on `@daybook/contracts` — responses parsed with the
+      server's own schemas; one shared in-flight refresh
 
 ### Tests
 - [x] **Cross-tenant 404 test** on every collection endpoint that exists —
