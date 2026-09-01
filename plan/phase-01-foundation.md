@@ -68,21 +68,21 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
 - [x] `/health`
 
 ### Mobile
-- [ ] Expo scaffold, expo-router, NativeWind
-- [ ] **`src/ui/theme/`** — implement the "Ledger" tokens from
-      `docs/design/design-system.md`: colour (light + dark), type scale, space,
-      radius, motion durations. One file. Everything else reads from it.
-- [ ] **`src/ui/` primitives** — `Row` (with margin rail), `Chip`, `Amount`
+- [x] Expo scaffold, expo-router, NativeWind
+- [x] **`src/ui/theme/`** — the "Ledger" tokens, both themes. Contrast is
+      asserted at 4.5:1 in light and dark by test, not by eye
+- [x] **`src/ui/` primitives** — `Row` (with margin rail), `Chip`, `Amount`
       (tabular), `Field`, `SectionHeader`, `Sheet`, `EmptyState`, `Button`
-- [ ] Reanimated + gesture-handler + expo-haptics wired; `useReducedMotion()`
+- [x] Reanimated + gesture-handler + expo-haptics wired; `useReducedMotion()`
       helper in place before the first animated component
 - [ ] **Prove a `@daybook/contracts` import resolves on a physical device**
-      before writing features — Metro + pnpm is the classic trap
+      before writing features — Metro + pnpm is the classic trap.
+      **Bundling is proven** for android and ios: both export, and the shared
+      code is verifiably inside the bundle. The device run itself still needs
+      a phone and `eas login`
 - [ ] Secure token storage via `expo-secure-store` (Keychain/Keystore)
-- [ ] **Avoid `react-native-mmkv` until Phase 3** — it is not in Expo Go and
-      would force development builds before the fast loop has earned it.
-      Use AsyncStorage for cursors and preferences until then.
-      See `docs/device-testing.md`.
+- [x] **Avoid `react-native-mmkv` until Phase 3** — honoured; AsyncStorage is
+      the only key-value dependency
 - [ ] OTP login flow
 - [ ] Business create / join / switch
 - [ ] Tab shell: Home, Orders, Add, Labour, More

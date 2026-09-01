@@ -1,12 +1,10 @@
 # Status
 
 **Updated:** 2026-08-31
-**Current phase:** 1 — Foundation. The whole server side is done (35/51).
-Everything left is the mobile app, plus wiring idempotency to its first
-mutating route.
-**Next task:** The Expo scaffold and the "Ledger" design tokens, then prove a
-`@daybook/contracts` import resolves on a physical device before writing any
-screens — Metro + pnpm is the classic trap.
+**Current phase:** 1 — Foundation, 40/51. Server side complete; the mobile
+foundation (tokens, primitives, motion, bundling) is in. Screens are next.
+**Next task:** The OTP login flow and the tab shell, on the typed API client.
+Then run it on a real phone — that needs `eas login` and a device.
 
 ## Shipped
 
@@ -38,6 +36,31 @@ a deliberate violation, not assumed.
 load against TypeScript 7 (`does not support TS 7.0`), in its latest release and
 its canary alike. The choice was TypeScript 6 or a different linter; oxlint won
 because it never loads the TypeScript API, so the coupling cannot break again.
+
+**The mobile foundation is in, and it bundles.** The "Ledger" tokens, all eight
+primitives, Reanimated with `useReducedMotion()` wired before the first animated
+component. `expo export` succeeds for android and ios, and the shared packages
+are verifiably *inside* the bundle — checked by grepping the Hermes bytecode for
+`labour.wages.settle` and core's money validator, not by trusting a clean build.
+
+**Contrast is a test, not a review note.** Every colour token is asserted at
+4.5:1 in both themes, plus the type scale, the 8pt grid, touch minimums and the
+240ms motion cap. The design system said "verify in both themes"; this verifies
+on every commit.
+
+**`node-linker=hoisted` had silently stopped applying.** pnpm 11 no longer reads
+it from `.npmrc`, so the setting the root CLAUDE.md warns never to remove was
+already inert — and Metro could not resolve NativeWind's runtime. It now lives
+in `pnpm-workspace.yaml`, where pnpm 11 actually reads it. This is the same
+class of failure as the `pnpm` key in package.json earlier: pnpm moved its
+configuration home and says nothing when it finds the old one.
+
+**Expo SDK 57 disagrees with the docs about versions.** `expo install --check`
+is authoritative and asks for RN 0.86.3, Reanimated 4.5.1, gesture-handler
+2.32.0 — while `apps/mobile/CLAUDE.md` says RN 0.87 and `docs/design/motion.md`
+names Reanimated 4.6.0 and gesture-handler 3.2.1. Reanimated 4.6 needs worklets
+0.12, which SDK 57's expo-modules-core caps at 0.10, so the docs' set cannot be
+installed together. Went with Expo's set; the docs need a correction.
 
 **Members and roles are done, with all six invariants from
 `docs/permissions.md` enforced over HTTP** — not merely in `@daybook/core`,
@@ -145,7 +168,8 @@ which makes the postgres:18 container exit on start. It wants a single mount at
 ## Tested
 
 `pnpm typecheck`, `pnpm lint` and `pnpm test` green across three packages —
-**183 tests**: 34 contracts, 42 core, 107 API against real Postgres 18.6. The API
+**222 tests**: 34 contracts, 42 core, 107 API against real Postgres 18.6,
+39 mobile. The API
 suite includes 14 cross-tenant isolation tests and 6 audit-immutability tests,
 all connecting as the unprivileged role. `pnpm check:vertical-leak` and
 `pnpm check:client-safe` green; no unmet peer dependency.

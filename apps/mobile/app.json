@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "DayBook",
+    "slug": "daybook",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "daybook",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.mayurpatel.daybook"
+    },
+    "android": {
+      "package": "com.mayurpatel.daybook",
+      "edgeToEdgeEnabled": true
+    },
+    "plugins": ["expo-router", "expo-secure-store"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

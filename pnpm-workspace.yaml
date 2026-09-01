@@ -2,6 +2,15 @@ packages:
   - "apps/*"
   - "packages/*"
 
+# Metro (React Native's bundler) does not reliably resolve pnpm's symlinked
+# layout, so the workspace installs hoisted. This lived in .npmrc until pnpm 11
+# stopped reading node-linker from there — silently, which meant the setting the
+# root CLAUDE.md warns not to remove had already stopped applying.
+#
+# Do not change without bundling apps/mobile and testing on a physical device.
+nodeLinker: hoisted
+strictPeerDependencies: false
+
 # Dependency build scripts are blocked by default. Each entry here is a
 # deliberate exception, declared in the repo rather than approved interactively
 # so the decision is visible in review.
