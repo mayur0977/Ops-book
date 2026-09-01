@@ -29,6 +29,7 @@ export async function withTenant<T>(
   db: Database,
   businessId: string,
   fn: (tx: TenantDatabase) => Promise<T>,
+  userId?: string,
 ): Promise<T> {
   if (!UUID_PATTERN.test(businessId)) {
     // set_config takes a string; a non-UUID here would become a confusing
@@ -37,9 +38,56 @@ export async function withTenant<T>(
       `withTenant: businessId is not a UUID: ${JSON.stringify(businessId)}`,
     );
   }
+  if (userId !== undefined && !UUID_PATTERN.test(userId)) {
+    throw new Error(`withTenant: userId is not a UUID: ${JSON.stringify(userId)}`);
+  }
 
   return db.transaction(async (tx) => {
     await tx.execute(sql`select set_config('app.business_id', ${businessId}, true)`);
+    if (userId !== undefined) {
+      await tx.execute(sql`select set_config('app.user_id', ${userId}, true)`);
+    }
+    return fn(tx);
+  });
+}
+
+/**
+ * The join-by-code lookup, and only that.
+ *
+ * Joining is the one read that must work for a caller who is deliberately not
+ * a member yet, so neither withTenant nor withUser can serve it. Setting
+ * `app.join_code` proves knowledge of the credential; migration 0004's policy
+ * then reveals exactly the row whose code matches, and nothing else.
+ */
+export async function withJoinCode<T>(
+  db: Database,
+  joinCode: string,
+  fn: (tx: TenantDatabase) => Promise<T>,
+): Promise<T> {
+  return db.transaction(async (tx) => {
+    await tx.execute(sql`select set_config('app.join_code', ${joinCode}, true)`);
+    return fn(tx);
+  });
+}
+
+/**
+ * For the reads that legitimately precede a business being chosen: listing the
+ * businesses a user belongs to, so the switcher has something to show.
+ *
+ * Sets `app.user_id` and no tenant, so migration 0003's policies expose that
+ * user's own membership rows and the businesses they point at — and nothing
+ * else. Every other tenant table still returns zero rows.
+ */
+export async function withUser<T>(
+  db: Database,
+  userId: string,
+  fn: (tx: TenantDatabase) => Promise<T>,
+): Promise<T> {
+  if (!UUID_PATTERN.test(userId)) {
+    throw new Error(`withUser: userId is not a UUID: ${JSON.stringify(userId)}`);
+  }
+  return db.transaction(async (tx) => {
+    await tx.execute(sql`select set_config('app.user_id', ${userId}, true)`);
     return fn(tx);
   });
 }

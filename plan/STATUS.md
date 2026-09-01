@@ -1,11 +1,11 @@
 # Status
 
 **Updated:** 2026-08-31
-**Current phase:** 1 — Foundation. Design, Workspace, Database, API bootstrap
-and auth are done (25/51). Businesses and membership are next.
-**Next task:** Business create/join/switch, members and roles, then the
-`preHandler` that resolves the business, verifies membership and loads
-permissions — followed by the idempotency middleware and the audit writer.
+**Current phase:** 1 — Foundation. Design, Workspace, Database, API bootstrap,
+auth and tenancy over HTTP are done (28/51). Members and roles are next.
+**Next task:** Member management — list, role change, permission overrides —
+which also completes the privilege-escalation tests for partner and manager.
+Then the mobile app.
 
 ## Shipped
 
@@ -37,6 +37,27 @@ a deliberate violation, not assumed.
 load against TypeScript 7 (`does not support TS 7.0`), in its latest release and
 its canary alike. The choice was TypeScript 6 or a different linter; oxlint won
 because it never loads the TypeScript API, so the coupling cannot break again.
+
+**Tenancy works over HTTP.** Create a business (seeded with all four system
+roles and their grants), join by code, list your memberships, rotate the code.
+A `preHandler` resolves the business, verifies membership and loads effective
+permissions before any handler runs, and each route declares the permission it
+needs.
+
+**404, never 403, across the tenant boundary** — and a test asserts that a
+business you are not in and a business that does not exist give byte-identical
+answers. Within a business the answer is 403, because there the resource is
+yours to know about and only the capability is missing.
+
+**Three RLS design faults surfaced by writing the API on top of it**, each
+fixed with a narrow policy rather than an escape hatch: `roles` stayed
+tenant-scoped while queries joined it without a tenant (silently returning "you
+belong to nothing"); the switcher needed a user's own memberships before any
+business was chosen (migration 0003); and joining by code is by definition a
+read by a non-member (migration 0004, where knowing the code is the credential).
+
+**Audit writer takes a `tx`, never a `db`** — so writing an audit row outside
+the transaction it describes is not expressible, rather than merely discouraged.
 
 **Auth works end to end**, verified against a running server rather than only
 through `app.inject`: request a code, read it from the console driver, verify,
@@ -104,7 +125,7 @@ which makes the postgres:18 container exit on start. It wants a single mount at
 ## Tested
 
 `pnpm typecheck`, `pnpm lint` and `pnpm test` green across three packages —
-**138 tests**: 34 contracts, 42 core, 62 API against real Postgres 18.6. The API
+**158 tests**: 34 contracts, 42 core, 82 API against real Postgres 18.6. The API
 suite includes 14 cross-tenant isolation tests and 6 audit-immutability tests,
 all connecting as the unprivileged role. `pnpm check:vertical-leak` and
 `pnpm check:client-safe` green; no unmet peer dependency.

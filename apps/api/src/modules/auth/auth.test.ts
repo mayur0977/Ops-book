@@ -1,11 +1,11 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { eq } from 'drizzle-orm';
-import { buildApp } from '../src/app.js';
-import { loadEnv } from '../src/env.js';
-import { db, pool, schema } from './helpers.js';
-import { hashRefreshToken } from '../src/lib/tokens.js';
-import type { App } from '../src/app.js';
-import type { SmsDriver } from '../src/platform/sms/index.js';
+import { buildApp } from '../../app.js';
+import { loadEnv } from '../../env.js';
+import { db, pool, schema } from '../../../test/helpers.js';
+import { hashRefreshToken } from '../../lib/tokens.js';
+import type { App } from '../../app.js';
+import type { SmsDriver } from '../../platform/sms/index.js';
 
 /**
  * Auth is exercised end to end through the HTTP surface against real Postgres.

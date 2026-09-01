@@ -1,15 +1,15 @@
 import { and, count, desc, eq, gt, isNull, sql } from 'drizzle-orm';
-import { AppError } from '../lib/errors.js';
-import { generateOtpCode, hashOtpCode, verifyOtpCode } from '../lib/otp.js';
+import { AppError } from '../../lib/errors.js';
+import { generateOtpCode, hashOtpCode, verifyOtpCode } from '../../lib/otp.js';
 import {
   generateRefreshToken,
   hashRefreshToken,
   signAccessToken,
-} from '../lib/tokens.js';
-import * as schema from '../db/schema/index.js';
-import type { Database } from '../db/client.js';
-import type { Env } from '../env.js';
-import type { SmsDriver } from '../platform/sms/index.js';
+} from '../../lib/tokens.js';
+import * as schema from '../../db/schema/index.js';
+import type { Database } from '../../db/client.js';
+import type { Env } from '../../env.js';
+import type { SmsDriver } from '../../platform/sms/index.js';
 import type { FastifyBaseLogger } from 'fastify';
 
 export interface AuthDeps {

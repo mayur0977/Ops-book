@@ -7,9 +7,9 @@ import {
   refreshSchema,
   tokenPairSchema,
 } from '@daybook/contracts';
-import { requestOtp, rotateRefreshToken, verifyOtp } from '../services/auth.js';
+import { requestOtp, rotateRefreshToken, verifyOtp } from './service.js';
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
-import type { AuthDeps } from '../services/auth.js';
+import type { AuthDeps } from './service.js';
 
 type AuthContext = Omit<AuthDeps, 'log'>;
 

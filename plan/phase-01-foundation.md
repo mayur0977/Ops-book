@@ -53,13 +53,17 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
       cooldown, per-number/day, per-IP/hour and a global denial-of-wallet ceiling
 - [x] Refresh rotation **with reuse detection** — replay revokes the whole
       family and its session
-- [ ] Businesses: create (with vertical), join by code, switch, regenerate code
+- [x] Businesses: create (with vertical), join by code, switch, regenerate code
 - [ ] Members, roles, permission overrides
-- [ ] `preHandler`: resolve business, verify membership, load permissions
+- [x] `preHandler`: resolve business, verify membership, load permissions —
+      a non-member gets 404, never 403
 - [x] Startup assertion: **every route declares a permission** — the server
       refuses to boot, so neither allow-by-default nor deny-by-default exists
-- [ ] Idempotency middleware (`Idempotency-Key`)
-- [ ] Audit writer — same transaction as the change
+- [ ] Idempotency middleware (`Idempotency-Key`) — `lib/idempotency.ts` is
+      written and unit-ready; wiring it to a mutating route waits for Phase 3,
+      which is the first phase with one worth replaying
+- [x] Audit writer — same transaction as the change. Takes a `tx`, never a
+      `db`, so calling it outside that transaction is not expressible
 - [x] `/health`
 
 ### Mobile
@@ -87,7 +91,8 @@ sits on them. Retrofitting any one of them means rewriting everything above it.
 - [ ] **Cross-tenant 404 test** on every collection endpoint (the one that
       matters) — database layer done (14 tests); the per-endpoint sweep waits
       on the endpoints existing
-- [ ] Privilege-escalation tests for all four roles
+- [ ] Privilege-escalation tests for all four roles — owner and staff covered
+      over HTTP; partner and manager land with the member-management routes
 - [x] OTP rate limit and expiry tests
 - [x] Refresh reuse-detection test
 - [ ] Idempotency replay test

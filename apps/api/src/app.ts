@@ -13,8 +13,10 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { AppError, toEnvelope } from './lib/errors.js';
 import { loggerOptions } from './lib/logging.js';
 import { routePermissions } from './plugins/route-permissions.js';
-import { healthRoutes } from './routes/health.js';
-import { authRoutes } from './routes/auth.js';
+import { healthRoutes } from './modules/health/routes.js';
+import { authRoutes } from './modules/auth/routes.js';
+import { businessRoutes } from './modules/business/routes.js';
+import { authenticate } from './plugins/authenticate.js';
 import { createSmsDriver } from './platform/sms/index.js';
 import { createDatabase, createPool } from './db/client.js';
 import type { Env } from './env.js';
@@ -118,7 +120,12 @@ export async function buildApp(env: Env, options: BuildOptions = {}): Promise<Ap
   const db = options.db ?? createDatabase(pool!);
   if (pool) app.addHook('onClose', async () => pool.end());
 
+  // Registered after route-permissions so its `dependencies` check is met, and
+  // before any tenant-scoped route so the preHandler is in place for them all.
+  await app.register(authenticate, { db, env });
+
   await app.register(authRoutes({ db, env, sms: options.sms ?? createSmsDriver(env) }));
+  await app.register(businessRoutes({ db }));
 
   return app;
 }
