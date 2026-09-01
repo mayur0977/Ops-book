@@ -14,15 +14,15 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           version: ${{ env.PNPM_VERSION }}
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
-      - uses: expo/expo-github-action@v8
+      - uses: expo/expo-github-action@v9
         with:
           eas-version: 23.0.0
           token: ${{ secrets.EXPO_TOKEN }}
@@ -31,7 +31,11 @@ jobs:
       # JS-only changes ship without a store review.
       - name: EAS Update (preview)
         if: github.ref == 'refs/heads/main'
-        run: eas update --branch preview --message "${{ github.event.head_commit.message }}"
+        # Passed via env, never interpolated into the command: a commit message
+        # is attacker-controlled and would otherwise be shell-injected.
+        env:
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: eas update --branch preview --message "$COMMIT_MESSAGE"
         working-directory: apps/mobile
 
       # Native changes need a full build and store submission.

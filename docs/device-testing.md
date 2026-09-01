@@ -36,6 +36,54 @@ will not run. Included and fine to use early: `expo-router`, `expo-sqlite`,
 Use Expo Go while building auth, tenancy and the configuration engine. It is
 the fastest loop you will get.
 
+### Point the app at your machine, not at localhost
+
+The single thing that wastes the most time here: **`localhost` on the phone
+means the phone.** The app will try to reach an API running on the handset,
+fail, and show "No connection" — which looks like a bug in the app and is not.
+
+The API already listens on `0.0.0.0`, so it is reachable; only the URL is
+wrong. Find this machine's address on the same Wi-Fi and use that:
+
+```bash
+ipconfig getifaddr en0            # macOS, Wi-Fi. en1 on some machines.
+
+# then, in apps/mobile:
+EXPO_PUBLIC_API_URL=http://192.168.1.23:3000 pnpm dev
+```
+
+Both devices must be on the same network, and a VPN on either one will break
+it. If the phone still cannot reach it, check the macOS firewall before
+suspecting the code.
+
+### Getting the OTP without SMS
+
+With `SMS_PROVIDER=console` the code is printed to the **API log**, not sent.
+Watch that terminal — it appears in a box:
+
+```
+  ┌─ DEV OTP ────────────────
+  │  +919876543210  →  483920
+  └──────────────────────────
+```
+
+This is an authentication bypass for anyone who can read the log, which is why
+`loadEnv` refuses `SMS_PROVIDER=console` when `NODE_ENV=production`. It exists
+so auth can be built and piloted before DLT registration clears (ADR 0007).
+
+### The full loop, in order
+
+```bash
+pnpm db:up                                    # postgres, redis, minio
+pnpm --filter @daybook/api db:migrate         # once, and after any new migration
+pnpm --filter @daybook/api db:bootstrap       # once: lets daybook_app log in locally
+pnpm --filter @daybook/api db:seed            # once: the permission catalogue
+pnpm --filter @daybook/api dev                # terminal 1 — the OTP appears here
+EXPO_PUBLIC_API_URL=http://<your-ip>:3000 pnpm --filter @daybook/mobile dev   # terminal 2
+```
+
+Then scan the QR in Expo Go.
+
 ## Stage 2 — Android development build (phase 3 onward)
 
 The real app, with every native module, on your phone. Still free.

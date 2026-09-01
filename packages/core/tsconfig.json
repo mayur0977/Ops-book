@@ -1,0 +1,4 @@
+{
+  "extends": "@daybook/config/tsconfig/library",
+  "include": ["src"]
+}

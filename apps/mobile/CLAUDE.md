@@ -1,6 +1,11 @@
 # apps/mobile
 
-Expo SDK 57 (RN 0.87, React 19.2) + expo-router + NativeWind.
+Expo SDK 57 (RN 0.86.3, React 19.2) + expo-router + NativeWind.
+
+Versions come from `expo install --check`, never from memory — SDK 57 pins
+RN 0.86.3, not 0.87. NativeWind 4 also requires Tailwind **3.x**: Tailwind 4
+moved to a CSS-first config that NativeWind does not read.
+
 Read the root `CLAUDE.md` first, then **all three** design files:
 
 | File | Owns |

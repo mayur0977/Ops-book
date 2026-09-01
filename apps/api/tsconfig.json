@@ -1,0 +1,4 @@
+{
+  "extends": "@daybook/config/tsconfig/node",
+  "include": ["src", "test", "drizzle.config.ts"]
+}
