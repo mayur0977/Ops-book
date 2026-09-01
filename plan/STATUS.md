@@ -35,6 +35,20 @@ load against TypeScript 7 (`does not support TS 7.0`), in its latest release and
 its canary alike. The choice was TypeScript 6 or a different linter; oxlint won
 because it never loads the TypeScript API, so the coupling cannot break again.
 
+**The whole Phase 1 journey is proven against a live server**, not only through
+`app.inject`: sign in, create a business, read the join code, a second person
+joins by code and lands as staff, staff gets **403** on the join code and the
+member list, the owner sees both members, and a stranger gets **404** for the
+same business. The 403-versus-404 distinction is the one that matters — within
+a business the resource is yours to know about and only the capability is
+missing; across the boundary neither is.
+
+**`docs/device-testing.md` now covers the two things that actually waste an
+afternoon**: `localhost` on a phone means the phone, so the app needs this
+machine's LAN address; and with `SMS_PROVIDER=console` the OTP is printed to
+the API log rather than sent. Every command in that runbook was executed to
+check it works, and the API was confirmed reachable over the LAN.
+
 **Idempotency is wired, not just written.** The member mutations accept
 `Idempotency-Key`, and the claim and the work share one transaction — so a key
 can never be spent by work that then failed (blocking the honest retry), nor can
